@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 🔹 404 NOT FOUND
+    // 404 NOT FOUND
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDTO> notFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 🔹 401 UNAUTHORIZED
+    // 401 UNAUTHORIZED
     @ExceptionHandler(InvalidCredentialsException.class)
     public ResponseEntity<ErrorResponseDTO> invalidCredentials(InvalidCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 🔹 403 FORBIDDEN - Usuario autenticado pero sin permisos suficientes
+    // 403 FORBIDDEN - Usuario autenticado pero sin permisos suficientes
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponseDTO> accessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 🔹 409 CONFLICT - Recurso ya existe
+    // 409 CONFLICT - Recurso ya existe
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorResponseDTO> alreadyExists(ResourceAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 🔹 400 BAD REQUEST - Validaciones de DTO (@NotBlank, @Email, etc.)
+    // 400 BAD REQUEST - Validaciones de DTO (@NotBlank, @Email, etc.)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponseDTO> validation(MethodArgumentNotValidException ex) {
         String errors = ex.getBindingResult()
@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 🔹 409 CONFLICT - Protección por si falla constraint UNIQUE en base de datos
+    // 409 CONFLICT - Protección por si falla constraint UNIQUE en base de datos
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ErrorResponseDTO> databaseError(DataIntegrityViolationException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
@@ -97,7 +97,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // 🔹 500 INTERNAL SERVER ERROR - Error inesperado
+    // 500 INTERNAL SERVER ERROR - Error inesperado
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> general(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

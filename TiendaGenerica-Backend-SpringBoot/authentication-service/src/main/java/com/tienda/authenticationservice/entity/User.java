@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "usuarios")
-public class Usuario {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class Usuario {
     private String apellido;
 
     @Column(name = "correo", nullable = false, unique = true, length = 100)
-    private String emailUsuario;
+    private String correo;
 
     @Column(name = "username", nullable = false, unique = true, length = 25)
     private String username;
@@ -43,5 +43,5 @@ public class Usuario {
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<UsuarioRol> roles;
+    private List<UserRole> roles;
 }

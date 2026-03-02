@@ -31,7 +31,7 @@
         <jjwt.version>0.11.5</jjwt.version>
         <springdoc.version>2.6.0</springdoc.version>
         <mysql.version>8.0.33</mysql.version>
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.32</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -84,7 +84,7 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-                <optional>true</optional>
+                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

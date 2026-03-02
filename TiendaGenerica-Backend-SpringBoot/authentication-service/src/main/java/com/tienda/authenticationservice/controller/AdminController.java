@@ -1,7 +1,9 @@
 package com.tienda.authenticationservice.controller;
 
-import com.tienda.authenticationservice.service.AuthService;
+import com.tienda.authenticationservice.dto.*;
+import com.tienda.authenticationservice.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,21 +12,48 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/admin/users")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
-    private final AuthService service;
+    private final UserService service;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/test")
-    public String adminOnly() {
-        return "Solo ADMIN puede ver esto";
+    @GetMapping
+    public List<UserResponseDTO> getAll() {
+        return service.findAll();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
-    @GetMapping("/roles")
-    public List<String> getRoles(@RequestParam("user") String usernameOrEmail) {
-        return service.getUserRoles(usernameOrEmail);
+    @GetMapping("/{id}")
+    public UserResponseDTO getById(@PathVariable Long id) {
+        return service.findById(id);
+    }
+
+    @PostMapping
+    public void create(@Valid @RequestBody RegisterUserDTO dto) {
+        service.create(dto);
+    }
+
+    @PutMapping("/{id}")
+    public void update(@PathVariable Long id,
+                       @Valid @RequestBody UpdateUserDTO dto) {
+        service.update(id, dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+
+    @PatchMapping("/{id}/roles")
+    public void updateRoles(@PathVariable Long id,
+                            @RequestBody UpdateRolesDTO dto) {
+        service.updateRoles(id, dto.getRoles());
+    }
+
+    @PatchMapping("/{id}/credentials")
+    public void updateCredentials(@PathVariable Long id,
+                                @RequestBody UpdateCredentialsDTO dto) {
+        service.updateCredentials(id, dto);
     }
 }

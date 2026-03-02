@@ -8,18 +8,18 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "usuario_rol")
-public class UsuarioRol {
+public class UserRole {
 
     @EmbeddedId
-    private UsuarioRolId id;
+    private UserRoleId id;
 
     @ManyToOne
     @MapsId("idUsuario")
     @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    private User usuario;
 
     @ManyToOne
     @MapsId("idRol")
     @JoinColumn(name = "id_rol")
-    private Rol rol;
+    private Role rol;
 }
