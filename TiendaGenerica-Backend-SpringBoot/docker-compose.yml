@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  mysql-auth:
+    image: mysql:8
+    container_name: mysql_auth
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_aut_db
+      MYSQL_INITDB_SKIP_TZINFO: 0
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./init-databases/authenticationservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./init-databases/authenticationservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:

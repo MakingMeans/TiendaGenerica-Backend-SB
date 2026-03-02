@@ -1,4 +1,4 @@
-# TiendaGenerica-Backend-SB
+# TiendaGenerica-TransaccionesComerciales
 
 Sistema web para la gestión de una tienda desarrollado con **Spring Boot + MySQL**, como proyecto académico. Aplicación web en **Java** que permite gestionar las transacciones comerciales de una tienda, administrando usuarios, clientes, proveedores, productos y ventas.
 
@@ -21,7 +21,7 @@ Sistema web para la gestión de una tienda desarrollado con **Spring Boot + MySQ
 ## Login del sistema
 Ingresar con usuario y contraseña para acceder al sistema de la tienda.  
 
-✔ Usuario inicial:
+Usuario inicial:
 admininicial / admin123456
 
 ---
@@ -148,8 +148,8 @@ git --version
 ## 1 Clonar repositorio
 
 ```
-git clone https://github.com/MakingMeans/TiendaGenerica-Backend-SB
-cd TiendaGenerica-Backend-SB
+git clone https://github.com/MakingMeans/TiendaGenerica-TransaccionesComerciales
+cd TiendaGenerica-TransaccionesComerciales
 ```
 
 ---
@@ -208,12 +208,4 @@ admin123456
 ```
 
 ---
-
-# GitFlow
-
-Ramas:
-
-- main → versión estable
-- develop → integración
-- feature/* → nuevas funcionalidades
 
