@@ -33,6 +33,5 @@ build
 .vercel
 .netlify
 .vscode
-tsconfig.tsbuildinfo
 .ncurc.js
 knip.jsonc
