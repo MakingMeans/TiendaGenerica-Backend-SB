@@ -1,10 +1,25 @@
-CREATE TABLE usuarios (
-    id_usuario BIGSERIAL PRIMARY KEY,
-    cedula_usuario VARCHAR(20) NOT NULL UNIQUE,
-    nombre_usuario VARCHAR(20) NOT NULL,
-    apellido_usuario VARCHAR(20) NOT NULL,
-    email_usuario VARCHAR(50) NOT NULL UNIQUE,
+CREATE TABLE IF NOT EXISTS usuarios (
+    id_usuario BIGINT AUTO_INCREMENT PRIMARY KEY,
+    cedula VARCHAR(20) NOT NULL UNIQUE,
+    nombre VARCHAR(50) NOT NULL,
+    apellido VARCHAR(50) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
     username VARCHAR(25) NOT NULL UNIQUE,
-    password VARCHAR(100) NOT NULL,
-    activo BOOLEAN DEFAULT TRUE
-);
+    password VARCHAR(255) NOT NULL,
+    activo BOOLEAN DEFAULT TRUE,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS roles (
+    id_rol BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(150)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS usuario_rol (
+    id_usuario BIGINT NOT NULL,
+    id_rol BIGINT NOT NULL,
+    PRIMARY KEY (id_usuario, id_rol),
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_rol) REFERENCES roles(id_rol) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
