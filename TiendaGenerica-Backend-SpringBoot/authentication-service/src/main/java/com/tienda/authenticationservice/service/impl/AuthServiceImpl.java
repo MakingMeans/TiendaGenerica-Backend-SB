@@ -1,15 +1,15 @@
 package com.tienda.authenticationservice.service.impl;
 
 import com.tienda.authenticationservice.dto.*;
-import com.tienda.authenticationservice.entity.Usuario;
-import com.tienda.authenticationservice.entity.Rol;
-import com.tienda.authenticationservice.entity.UsuarioRol;
-import com.tienda.authenticationservice.entity.UsuarioRolId;
+import com.tienda.authenticationservice.entity.User;
+import com.tienda.authenticationservice.entity.Role;
+import com.tienda.authenticationservice.entity.UserRole;
+import com.tienda.authenticationservice.entity.UserRoleId;
 import com.tienda.authenticationservice.exception.ResourceAlreadyExistsException;
 import com.tienda.authenticationservice.exception.InvalidCredentialsException;
-import com.tienda.authenticationservice.repository.UsuarioRepository;
-import com.tienda.authenticationservice.repository.RolRepository;
-import com.tienda.authenticationservice.repository.UsuarioRolRepository;
+import com.tienda.authenticationservice.repository.UserRepository;
+import com.tienda.authenticationservice.repository.RoleRepository;
+import com.tienda.authenticationservice.repository.UserRoleRepository;
 import com.tienda.authenticationservice.security.JwtService;
 import com.tienda.authenticationservice.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +23,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UsuarioRepository repository;
-    private final RolRepository rolRepository;
-    private final UsuarioRolRepository usuarioRolRepository;
+    private final UserRepository repository;
+    private final RoleRepository rolRepository;
+    private final UserRoleRepository usuarioRolRepository;
     private final PasswordEncoder encoder;
     private final JwtService jwtUtil;
 
     @Override
     public LoginResponseDTO login(LoginRequestDTO request) {
 
-        Usuario usuario = repository
-                .findByUsernameOrEmailUsuario(request.getUsername(), request.getUsername())
+        User usuario = repository
+                .findByUsernameOrCorreo(request.getUsername(), request.getUsername())
                 .orElseThrow(() -> new InvalidCredentialsException("Usuario o contraseña incorrecta"));
 
         if (!encoder.matches(request.getPassword(), usuario.getPassword())) {
@@ -61,15 +61,15 @@ public class AuthServiceImpl implements AuthService {
             throw new ResourceAlreadyExistsException("Cédula ya existe");
         }
 
-        if (repository.existsByEmailUsuario(request.getEmailUsuario())) {
+        if (repository.existsByCorreo(request.getCorreo())) {
             throw new ResourceAlreadyExistsException("Correo ya existe");
         }
         
-        Usuario usuario = new Usuario();
+        User usuario = new User();
         usuario.setCedula(request.getCedula());
         usuario.setNombre(request.getNombre());
         usuario.setApellido(request.getApellido());
-        usuario.setEmailUsuario(request.getEmailUsuario());
+        usuario.setCorreo(request.getCorreo());
         usuario.setUsername(request.getUsername());
         usuario.setPassword(encoder.encode(request.getPassword()));
         usuario.setActivo(true);
@@ -77,15 +77,15 @@ public class AuthServiceImpl implements AuthService {
 
         usuario = repository.save(usuario);
 
-        Rol basic = rolRepository.findByNombre("USER")
+        Role basic = rolRepository.findByNombre("ROLE_USER")
                 .orElseGet(() -> {
-                    Rol r = new Rol();
-                    r.setNombre("USER");
+                    Role r = new Role();
+                    r.setNombre("ROLE_USER");
                     return rolRepository.save(r);
                 });
 
-        UsuarioRol usuarioRol = new UsuarioRol();
-        usuarioRol.setId(new UsuarioRolId(usuario.getIdUsuario(), basic.getIdRol()));
+        UserRole usuarioRol = new UserRole();
+        usuarioRol.setId(new UserRoleId(usuario.getIdUsuario(), basic.getIdRol()));
         usuarioRol.setUsuario(usuario);
         usuarioRol.setRol(basic);
 
@@ -94,8 +94,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public List<String> getUserRoles(String usernameOrEmail) {
-        Usuario usuario = repository
-                .findByUsernameOrEmailUsuario(usernameOrEmail, usernameOrEmail)
+        User usuario = repository
+                .findByUsernameOrCorreo(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() -> new InvalidCredentialsException("Usuario no encontrado"));
 
         return usuario.getRoles()

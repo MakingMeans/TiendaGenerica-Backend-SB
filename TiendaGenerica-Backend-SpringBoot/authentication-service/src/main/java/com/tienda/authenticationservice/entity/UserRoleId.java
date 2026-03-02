@@ -14,7 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class UsuarioRolId implements Serializable {
+public class UserRoleId implements Serializable {
 
     private Long idUsuario;
     private Long idRol;
@@ -22,8 +22,8 @@ public class UsuarioRolId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UsuarioRolId)) return false;
-        UsuarioRolId that = (UsuarioRolId) o;
+        if (!(o instanceof UserRoleId)) return false;
+        UserRoleId that = (UserRoleId) o;
         return Objects.equals(idUsuario, that.idUsuario) &&
                Objects.equals(idRol, that.idRol);
     }

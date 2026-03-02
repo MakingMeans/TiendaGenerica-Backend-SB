@@ -20,7 +20,7 @@ public class RegisterUserDTO {
 
     @NotBlank
     @Email
-    private String emailUsuario;
+    private String correo;
 
     @NotBlank
     private String username;
