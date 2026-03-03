@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
         return map(usuarioRepository.findById(id).orElseThrow());
     }
 
-    @Override
+    /*@Override
     public void create(RegisterUserDTO dto) {
 
         User u = new User();
@@ -59,6 +59,59 @@ public class UserServiceImpl implements UserService {
         ur.setRol(defaultRole);
 
         usuarioRolRepository.save(ur);
+    }*/
+
+    @Override
+    public void create(RegisterUserDTO dto) {
+
+        User u = new User();
+        u.setCedula(dto.getCedula());
+        u.setNombre(dto.getNombre());
+        u.setApellido(dto.getApellido());
+        u.setCorreo(dto.getCorreo());
+        u.setUsername(dto.getUsername());
+        u.setPassword(encoder.encode(dto.getPassword()));
+        u.setActivo(true);
+        u.setFechaCreacion(LocalDateTime.now());
+
+        User savedUser = usuarioRepository.save(u);
+
+        List<String> requestedRoles = dto.getRoles();
+
+        List<Role> rolesToAssign;
+
+        // si vienen roles hay que filtrar validos
+        if (requestedRoles != null && !requestedRoles.isEmpty()) {
+
+            rolesToAssign = requestedRoles.stream()
+                    .map(r -> rolRepository.findByNombre(r).orElse(null))
+                    .filter(r -> r != null)
+                    .toList();
+
+            // si ninguno fue válido poner default ROLE_USER
+            if (rolesToAssign.isEmpty()) {
+                rolesToAssign = List.of(
+                        rolRepository.findByNombre("ROLE_USER").orElseThrow()
+                );
+            }
+
+        } else {
+            // default directo
+            rolesToAssign = List.of(
+                    rolRepository.findByNombre("ROLE_USER").orElseThrow()
+            );
+        }
+
+        // guardar relaciones
+        for (Role rol : rolesToAssign) {
+
+            UserRole ur = new UserRole();
+            ur.setId(new UserRoleId(savedUser.getIdUsuario(), rol.getIdRol()));
+            ur.setUsuario(savedUser);
+            ur.setRol(rol);
+
+            usuarioRolRepository.save(ur);
+        }
     }
 
     @Override

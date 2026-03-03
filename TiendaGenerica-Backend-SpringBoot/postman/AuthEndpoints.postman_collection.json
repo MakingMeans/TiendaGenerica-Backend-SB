@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "062afb98-3529-4cd8-a36a-37347d84be45",
-    "name": "API Backend",
+    "name": "AuthEndpoints",
     "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "50182838",
@@ -107,7 +107,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNDkxMzU3LCJleHAiOjE3NzI0OTQ5NTd9.6-E63cSW4U_BbCEZO-zHYgyjOU9wLXYNN5YAEf3CojE",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTA1ODY4LCJleHAiOjE3NzI1MDk0Njh9.NEBzhBnYNvoSK0XPWDfQk5nq1BIGGMXxRP6x2NPz-2k",
               "type": "string"
             }
           ]
@@ -168,7 +168,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNDg4MTA2LCJleHAiOjE3NzI0OTE3MDZ9.roIM6qfFCIqsXcTFxqOJEKXa9sskdZpnHZZf2vwc6oE",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTA1ODY4LCJleHAiOjE3NzI1MDk0Njh9.NEBzhBnYNvoSK0XPWDfQk5nq1BIGGMXxRP6x2NPz-2k",
               "type": "string"
             }
           ]
@@ -177,7 +177,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"cedula\":\"2001\",\r\n  \"nombre\":\"Luis\",\r\n  \"apellido\":\"Ramirez\",\r\n  \"correo\":\"luis@mail.com\",\r\n  \"username\":\"luis\",\r\n  \"password\":\"123456\"\r\n}",
+          "raw": "{\r\n  \"cedula\":\"2001\",\r\n  \"nombre\":\"Luis\",\r\n  \"apellido\":\"Ramirez\",\r\n  \"correo\":\"luis@mail.com\",\r\n  \"username\":\"luis\",\r\n  \"password\":\"123456\",\r\n  \"roles\": [\"ROLE_ADMIN\",\"ROLE_GERENTE\"]\r\n}",
           "options": {
             "raw": {
               "language": "json"
