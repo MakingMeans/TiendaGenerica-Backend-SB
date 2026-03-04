@@ -1,13 +1,36 @@
-import type { LoginRequest, LoginResponse } from './auth.types';
+import axios from 'axios';
 
-export const login = async (
-  credentials: LoginRequest
-): Promise<LoginResponse> => {
+// Creamos instancia apuntando al API Gateway
+const api = axios.create({
+  baseURL: 'http://localhost:8080',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
-  // Simulación temporal
-  if (credentials.username === 'admin' && credentials.password === '123456') {
-    return { token: 'fake-jwt-token' };
+// Interceptor para enviar JWT automáticamente
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
 
-  throw new Error('Credenciales inválidas');
+  return config;
+});
+
+export interface LoginRequestDTO {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponseDTO {
+  token: string;
+}
+
+export const login = async (
+  data: LoginRequestDTO
+): Promise<LoginResponseDTO> => {
+  const response = await api.post('/auth/login', data);
+  return response.data;
 };

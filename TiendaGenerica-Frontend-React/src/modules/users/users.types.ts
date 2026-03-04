@@ -1,16 +1,27 @@
 export interface User {
-  id_usuario: number;
-  cedula: string;
-  nombre: string;
-  apellido: string;
-  correo: string;
-  username: string;
-  password: string;
-  activo: boolean;
-  fecha_creacion: string;
+  id: number
+  cedula: string
+  nombre: string
+  apellido: string
+  correo: string
+  username: string
+  activo: boolean
+  roles: string[]
 }
 
-export type CreateUserDTO = Omit<
-  User,
-  'id_usuario' | 'fecha_creacion'
->;
+export interface CreateUserDTO {
+  cedula: string
+  nombre: string
+  apellido: string
+  correo: string
+  username: string
+  password: string
+  roles: string[]
+}
+
+export interface UpdateUserDTO {
+  nombre: string
+  apellido: string
+  correo: string
+  activo: boolean
+}

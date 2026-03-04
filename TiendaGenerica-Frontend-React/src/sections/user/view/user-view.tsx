@@ -16,6 +16,7 @@ import { getUsers } from 'src/modules/users/users.service';
 import { EditUserDialog } from 'src/modules/users/components/EditUserDialog';
 import { CreateUserDialog } from 'src/modules/users/components/CreateUserDialog';
 import { DeleteUserDialog } from 'src/modules/users/components/DeleteUserDialog';
+import { ReactivateUserDialog } from 'src/modules/users/components/ReactivateUserDialog';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -52,10 +53,11 @@ const loadUsers = async () => {
 
   
 
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+const [selectedUser, setSelectedUser] = useState<User | null>(null);
 const [openEdit, setOpenEdit] = useState(false);
 const [openDelete, setOpenDelete] = useState(false);
 const [openCreate, setOpenCreate] = useState(false);
+
 
 const handleOpenEdit = (user: User) => {
   setSelectedUser(user);
@@ -113,7 +115,7 @@ const handleOpenDelete = (user: User) => {
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    users.map((user) => user.id_usuario.toString())
+                    users.map((user) => user.id.toString())
                   )
                 }
                 headLabel={[
@@ -134,10 +136,10 @@ const handleOpenDelete = (user: User) => {
                   )
                   .map((row) => (
                     <UserTableRow
-  key={row.id_usuario}
+  key={row.id}
   row={row}
-  selected={table.selected.includes(row.id_usuario.toString())}
-  onSelectRow={() => table.onSelectRow(row.id_usuario.toString())}
+  selected={table.selected.includes(row.id.toString())}
+  onSelectRow={() => table.onSelectRow(row.id.toString())}
   onEdit={(user) => handleOpenEdit(user)}
   onDelete={(user) => handleOpenDelete(user)}
 />
@@ -177,6 +179,13 @@ const handleOpenDelete = (user: User) => {
 />
 
 <DeleteUserDialog
+  open={openDelete}
+  user={selectedUser}
+  onClose={() => setOpenDelete(false)}
+  onSuccess={loadUsers}
+/>
+
+<ReactivateUserDialog
   open={openDelete}
   user={selectedUser}
   onClose={() => setOpenDelete(false)}

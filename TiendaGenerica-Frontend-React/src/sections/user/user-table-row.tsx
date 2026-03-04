@@ -43,7 +43,15 @@ export function UserTableRow({
 
   return (
     <>
-      <TableRow hover tabIndex={-1} selected={selected}>
+      <TableRow
+  hover
+  tabIndex={-1}
+  selected={selected}
+  sx={{
+    opacity: row.activo ? 1 : 0.5,
+    backgroundColor: row.activo ? 'inherit' : 'grey.100',
+  }}
+>
   <TableCell padding="checkbox">
     <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
   </TableCell>
@@ -97,7 +105,7 @@ export function UserTableRow({
   }}
 >
             <Iconify icon="solar:pen-bold" />
-            Edit
+            Editar
           </MenuItem>
 
           <MenuItem
@@ -105,11 +113,17 @@ export function UserTableRow({
     handleClosePopover();
     onDelete(row);
   }}
-  sx={{ color: 'error.main' }}
+  sx={{ color: row.activo ? 'error.main' : 'success.main' }}
 >
-            <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
-          </MenuItem>
+  <Iconify
+    icon={
+      row.activo
+        ? 'solar:trash-bin-trash-bold'
+        : 'solar:check-circle-bold'
+    }
+  />
+  {row.activo ? 'Desactivar' : 'Reactivar'}
+</MenuItem>
         </MenuList>
       </Popover>
     </>

@@ -9,7 +9,6 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
-import UsersPage from 'src/modules/users/pages/UsersPage';
 import { ProtectedRoute } from 'src/modules/auth/ProtectedRoute';
 
 // ----------------------------------------------------------------------
@@ -44,26 +43,26 @@ const renderFallback = () => (
 
 export const routesSection: RouteObject[] = [
   {
+    path: '/',
     element: (
-      
-     <ProtectedRoute>
-    <DashboardLayout>
-      <Suspense fallback={renderFallback()}>
-        <Outlet />
-      </Suspense>
-    </DashboardLayout>
-  </ProtectedRoute>
+      <ProtectedRoute>
+        <DashboardLayout>
+          <Suspense fallback={renderFallback()}>
+            <Outlet />
+          </Suspense>
+        </DashboardLayout>
+      </ProtectedRoute>
     ),
     children: [
       { index: true, element: <DashboardPage /> },
       { path: 'user', element: <UserPage /> },
       { path: 'products', element: <ProductsPage /> },
       { path: 'blog', element: <BlogPage /> },
-      { path: 'users', element: <UsersPage />,},
+
     ],
   },
   {
-    path: 'sign-in',
+    path: '/sign-in',
     element: (
       <AuthLayout>
         <SignInPage />
@@ -71,7 +70,7 @@ export const routesSection: RouteObject[] = [
     ),
   },
   {
-    path: '404',
+    path: '/404',
     element: <Page404 />,
   },
   { path: '*', element: <Page404 /> },

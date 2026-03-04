@@ -16,7 +16,7 @@ type Props = {
   onSuccess: () => void;
 };
 
-export function DeleteUserDialog({ open, user, onClose, onSuccess }: Props) {
+export function ReactivateUserDialog({ open, user, onClose, onSuccess }: Props) {
 const handleDelete = async () => {
   if (!user) return;
 
@@ -24,7 +24,7 @@ const handleDelete = async () => {
     nombre: user.nombre,
     apellido: user.apellido,
     correo: user.correo,
-    activo: false,
+    activo: true,
   });
 
   onSuccess();
@@ -33,18 +33,18 @@ const handleDelete = async () => {
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Desactivar Usuario</DialogTitle>
+      <DialogTitle>Reactivar Usuario</DialogTitle>
 
       <DialogContent>
         <Typography>
-          ¿Deseas desactivar al usuario <strong>{user?.nombre}</strong>?
+          ¿Deseas reactivar al usuario <strong>{user?.nombre}</strong>?
         </Typography>
       </DialogContent>
 
       <DialogActions>
         <Button onClick={onClose}>Cancelar</Button>
-        <Button color="error" variant="contained" onClick={handleDelete}>
-          Desactivar
+        <Button color="success" variant="contained" onClick={handleDelete}>
+          Reactivar
         </Button>
       </DialogActions>
     </Dialog>

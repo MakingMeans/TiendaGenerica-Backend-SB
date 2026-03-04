@@ -3,8 +3,12 @@ import { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
 import DialogTitle from '@mui/material/DialogTitle';
+import FormControl from '@mui/material/FormControl';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -25,17 +29,25 @@ export function CreateUserDialog({ open, onClose, onSuccess }: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [activo, setActivo] = useState(true);
+  const [rol, setRol] = useState('CLIENTE'); // 👈 nuevo estado
 
+  const availableRoles = [
+  "ROLE_ADMIN",
+  "ROLE_GERENTE",
+  "ROLE_CAJERO",
+  "ROLE_INVENTARIO",
+  "ROLE_USER"
+];
   const handleSubmit = async () => {
     await createUser({
-      cedula,
-      nombre,
-      apellido,
-      correo,
-      username,
-      password,
-      activo,
-    });
+  cedula,
+  nombre,
+  apellido,
+  correo,
+  username,
+  password,
+  roles: [rol],
+});
 
     onSuccess();
     onClose();
@@ -48,6 +60,7 @@ export function CreateUserDialog({ open, onClose, onSuccess }: Props) {
     setUsername('');
     setPassword('');
     setActivo(true);
+    setRol('CLIENTE');
   };
 
   return (
@@ -67,6 +80,22 @@ export function CreateUserDialog({ open, onClose, onSuccess }: Props) {
           onChange={(e) => setPassword(e.target.value)}
           fullWidth
         />
+
+        {/* 🔥 SELECT DE ROLES */}
+        <FormControl fullWidth>
+  <InputLabel>Rol</InputLabel>
+  <Select
+    value={rol}
+    label="Rol"
+    onChange={(e) => setRol(e.target.value)}
+  >
+    {availableRoles.map((role) => (
+      <MenuItem key={role} value={role}>
+        {role.replace("ROLE_", "")}
+      </MenuItem>
+    ))}
+  </Select>
+</FormControl>
 
         <FormControlLabel
           control={<Switch checked={activo} onChange={(e) => setActivo(e.target.checked)} />}

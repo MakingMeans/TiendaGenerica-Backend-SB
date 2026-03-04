@@ -1,45 +1,88 @@
 import type { User, CreateUserDTO } from './users.types';
 
-let users: User[] = [
-  {
-    id_usuario: 1,
-    cedula: '123456',
-    nombre: 'Admin',
-    apellido: 'Principal',
-    correo: 'admin@test.com',
-    username: 'admin',
-    password: '1234',
-    activo: true,
-    fecha_creacion: new Date().toISOString(),
-  },
-];
+const API_URL = "http://localhost:8080/admin/users";
+
+const getAuthHeaders = () => {
+  const token = localStorage.getItem("token");
+
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+};
+
+export const updateUserRoles = async (id: number, roles: string[]) => {
+  const token = localStorage.getItem('token');
+
+  const response = await fetch(
+    `http://localhost:8080/admin/users/${id}/roles`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`, // 👈 IMPORTANTE
+      },
+      body: JSON.stringify({ roles }),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error('Error actualizando roles');
+  }
+
+  return response;
+};
+
+
+export const getUsers = async (): Promise<User[]> => {
+  const response = await fetch(API_URL, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error obteniendo usuarios");
+  }
+
+  return response.json();
+};
+
+export const createUser = async (
+  data: CreateUserDTO
+): Promise<void> => {
+  const response = await fetch(API_URL, {
+    method: "POST",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error creando usuario");
+  }
+};
 
 export const updateUser = async (
   id: number,
   updatedData: Partial<User>
 ): Promise<void> => {
-  users = users.map((user) =>
-    user.id_usuario === id
-      ? { ...user, ...updatedData }
-      : user
-  );
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "PUT",
+    headers: getAuthHeaders(),
+    body: JSON.stringify(updatedData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error actualizando usuario");
+  }
 };
 
 export const deleteUser = async (id: number): Promise<void> => {
-  users = users.filter((user) => user.id_usuario !== id);
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error eliminando usuario");
+  }
 };
-
-export const getUsers = async (): Promise<User[]> => users;
-
-export const createUser = async (
-  data: CreateUserDTO
-): Promise<void> => {
-  const newUser: User = {
-    id_usuario: users.length + 1,
-    ...data,
-    fecha_creacion: new Date().toISOString(),
-  };
-
-  users.push(newUser);
-};
-
