@@ -1,4 +1,4 @@
-package com.tienda.authenticationservice.filter;
+package com.tienda.supplierservice.security;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,18 +8,16 @@ import java.io.IOException;
 
 public class GatewayValidationFilter implements Filter {
 
-    private String gatewaySecret;
+    private final String gatewaySecret;
 
     public GatewayValidationFilter(String gatewaySecret) {
         this.gatewaySecret = gatewaySecret;
     }
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+    public void doFilter(ServletRequest request,
+                         ServletResponse response,
+                         FilterChain chain)
             throws IOException, ServletException {
 
         HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -27,23 +25,18 @@ public class GatewayValidationFilter implements Filter {
 
         String gatewayHeader = httpRequest.getHeader("X-Gateway-Secret");
 
-
-        if (gatewaySecret == null || !gatewaySecret.equals(gatewayHeader)) {
+        if (!gatewaySecret.equals(gatewayHeader)) {
 
             httpResponse.setStatus(HttpServletResponse.SC_FORBIDDEN);
             httpResponse.setContentType("application/json");
-            httpResponse.setCharacterEncoding("UTF-8");
-            httpResponse.getWriter().write(
-                    "{\"error\": \"Direct access not allowed. Use API Gateway.\", \"status\": 403}"
-            );
-            httpResponse.getWriter().flush();
+
+            httpResponse.getWriter().write("""
+                {"error":"Direct access not allowed. Use API Gateway.","status":403}
+            """);
+
             return;
         }
 
         chain.doFilter(request, response);
-    }
-
-    @Override
-    public void destroy() {
     }
 }
