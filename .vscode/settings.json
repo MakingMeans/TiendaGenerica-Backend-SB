@@ -1,0 +1,18 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.jdt.ls.vmargs": "-javaagent:C:/Users/USUARIO/Documents/lombok.jar -Xmx2G",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.checkProjectSettingsExclusions": false,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-17",
+            "path": "C:/Program Files/Java/jdk-17",
+            "default": true
+        }
+    ],
+    "java.annotation.processing.enabled": true,
+    "java.import.maven.enabled": true,
+    "java.format.settings.url": "",
+    "java.format.settings.profile": "GoogleStyle"
+}
