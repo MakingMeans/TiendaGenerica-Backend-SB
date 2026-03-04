@@ -80,11 +80,20 @@ public class ClientServiceImpl implements ClientService{
 
     @Override
     public void delete(Long id) {
+        repository.deleteById(id);
+    }
+    
+    @Override
+    public void deactivate(Long id) {
 
         Client client = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found"));
 
-        client.setActivo(false);
+        if(client.getActivo()){
+            client.setActivo(false);
+        }else{
+            client.setActivo(true);
+        }
         repository.save(client);
     }
 

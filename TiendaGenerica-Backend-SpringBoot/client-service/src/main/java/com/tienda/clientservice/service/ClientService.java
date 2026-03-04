@@ -14,4 +14,6 @@ public interface ClientService {
     ClientDTO update(Long id, ClientDTO dto);
 
     void delete(Long id);
+
+    void deactivate(Long id);
 }

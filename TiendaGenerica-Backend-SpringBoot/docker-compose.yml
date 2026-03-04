@@ -1,24 +1,116 @@
 version: '3.8'
 
 services:
+
+  # =========================
+  # AUTH SERVICE DB
+  # =========================
   mysql-auth:
     image: mysql:8
     container_name: mysql_auth
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: tienda_aut_db
-      MYSQL_INITDB_SKIP_TZINFO: 0
     ports:
       - "3306:3306"
     volumes:
       - ./init-databases/authenticationservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
       - ./init-databases/authenticationservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      - mysql_auth_data:/var/lib/mysql
 
+
+  # =========================
+  # SUPPLIERS SERVICE DB
+  # =========================
+  mysql-suppliers:
+    image: mysql:8
+    container_name: mysql_suppliers
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_sup_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./init-databases/supplierservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./init-databases/supplierservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_suppliers_data:/var/lib/mysql
+
+
+  # =========================
+  # SALES SERVICE DB
+  # =========================
+  mysql-sales:
+    image: mysql:8
+    container_name: mysql_sales
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_sal_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./init-databases/saleservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./init-databases/saleservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_sales_data:/var/lib/mysql
+
+
+  # =========================
+  # CATALOG SERVICE DB
+  # =========================
+  mysql-catalog:
+    image: mysql:8
+    container_name: mysql_catalog
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_cat_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./init-databases/catalogservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./init-databases/catalogservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_catalog_data:/var/lib/mysql
+
+
+  # =========================
+  # CLIENT SERVICE DB
+  # =========================
+  mysql-clients:
+    image: mysql:8
+    container_name: mysql_clients
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_cli_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./init-databases/clientservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./init-databases/clientservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_clients_data:/var/lib/mysql
+
+
+  # =========================
+  # BUY SERVICE DB
+  # =========================
+  mysql-buy:
+    image: mysql:8
+    container_name: mysql_buy
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_buy_db
+    ports:
+      - "3311:3306"
+    volumes:
+      - ./init-databases/buyservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./init-databases/buyservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_buy_data:/var/lib/mysql
+
+
+# =========================
+# VOLUMES
+# =========================
 volumes:
-  mysql_data:
+  mysql_auth_data:
+  mysql_suppliers_data:
+  mysql_sales_data:
+  mysql_catalog_data:
+  mysql_clients_data:
+  mysql_buy_data:

@@ -2,6 +2,7 @@ package com.tienda.authenticationservice.service.impl;
 
 import com.tienda.authenticationservice.dto.*;
 import com.tienda.authenticationservice.entity.*;
+import com.tienda.authenticationservice.exception.ResourceNotFoundException;
 import com.tienda.authenticationservice.repository.*;
 import com.tienda.authenticationservice.service.UserService;
 
@@ -33,33 +34,6 @@ public class UserServiceImpl implements UserService {
     public UserResponseDTO findById(Long id) {
         return map(usuarioRepository.findById(id).orElseThrow());
     }
-
-    /*@Override
-    public void create(RegisterUserDTO dto) {
-
-        User u = new User();
-        u.setCedula(dto.getCedula());
-        u.setNombre(dto.getNombre());
-        u.setApellido(dto.getApellido());
-        u.setCorreo(dto.getCorreo());
-        u.setUsername(dto.getUsername());
-        u.setPassword(encoder.encode(dto.getPassword()));
-        u.setActivo(true);
-        u.setFechaCreacion(LocalDateTime.now());
-
-        User savedUser = usuarioRepository.save(u);
-
-        Role defaultRole = rolRepository
-                .findByNombre("ROLE_USER")
-                .orElseThrow();
-
-        UserRole ur = new UserRole();
-        ur.setId(new UserRoleId(savedUser.getIdUsuario(), defaultRole.getIdRol()));
-        ur.setUsuario(savedUser);
-        ur.setRol(defaultRole);
-
-        usuarioRolRepository.save(ur);
-    }*/
 
     @Override
     public void create(RegisterUserDTO dto) {
@@ -170,6 +144,20 @@ public class UserServiceImpl implements UserService {
             u.setPassword(encoder.encode(dto.getPassword()));
         }
 
+        usuarioRepository.save(u);
+    }
+
+    @Override
+    public void deactivate(Long id) {
+
+        User u = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if(u.getActivo()){
+            u.setActivo(false);
+        }else{
+            u.setActivo(true);
+        }
         usuarioRepository.save(u);
     }
 

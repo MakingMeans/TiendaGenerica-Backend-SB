@@ -1,0 +1,209 @@
+{
+  "info": {
+    "_postman_id": "f49f62b8-e17c-41ce-a7a7-81b0bbfb1c4b",
+    "name": "SupplierEndpoints",
+    "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50182838",
+    "_collection_link": "https://go.postman.co/collection/50182838-f49f62b8-e17c-41ce-a7a7-81b0bbfb1c4b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GetAllSuppliers",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNjAyMzgwLCJleHAiOjE3NzI2MDU5ODB9.7fe1lmIIwFbE0JA4XkwrxcayDFz9TzlwX8FF_1yofXI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/suppliers",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "suppliers"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetSupplier",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNjAyMzgwLCJleHAiOjE3NzI2MDU5ODB9.7fe1lmIIwFbE0JA4XkwrxcayDFz9TzlwX8FF_1yofXI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/suppliers/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "suppliers",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateSupplier",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNjAyMzgwLCJleHAiOjE3NzI2MDU5ODB9.7fe1lmIIwFbE0JA4XkwrxcayDFz9TzlwX8FF_1yofXI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nit\": \"900457\",\r\n  \"nombre\": \"Importaciones Global\",\r\n  \"direccion\": \"Calle 123\",\r\n  \"telefono\": \"6019876543\",\r\n  \"ciudad\": \"Medellín\",\r\n  \"email\": \"contacto@global.com\",\r\n  \"activo\": true\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/suppliers",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "suppliers"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateSupplier",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNjAyMzgwLCJleHAiOjE3NzI2MDU5ODB9.7fe1lmIIwFbE0JA4XkwrxcayDFz9TzlwX8FF_1yofXI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nit\": \"900123\",\r\n  \"nombre\": \"Distribuciones Andinas SAS\",\r\n  \"direccion\": \"Zona Industrial Norte\",\r\n  \"telefono\": \"6011111111\",\r\n  \"ciudad\": \"Bogotá\",\r\n  \"email\": \"nuevo@andinas.com\",\r\n  \"activo\": true\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/suppliers/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "suppliers",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteSupplier",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNjAyMzgwLCJleHAiOjE3NzI2MDU5ODB9.7fe1lmIIwFbE0JA4XkwrxcayDFz9TzlwX8FF_1yofXI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/suppliers/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "suppliers",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeactiaveSupplier",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNjAyMzgwLCJleHAiOjE3NzI2MDU5ODB9.7fe1lmIIwFbE0JA4XkwrxcayDFz9TzlwX8FF_1yofXI",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/suppliers/1/act",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "suppliers",
+            "1",
+            "act"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "info": {
+    "_postman_id": "58af7549-25dd-4d60-9001-74161ef2fc0a",
+    "name": "ClientEndpoints",
+    "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50182838",
+    "_collection_link": "https://go.postman.co/collection/50182838-58af7549-25dd-4d60-9001-74161ef2fc0a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GetAllClients",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTkzNTMwLCJleHAiOjE3NzI1OTcxMzB9.rr0ZIXCKLyhTMGZjMVWRMvtNhaEnpVyKCtEx63PoRm0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clients",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "clients"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetClient",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTkzNTMwLCJleHAiOjE3NzI1OTcxMzB9.rr0ZIXCKLyhTMGZjMVWRMvtNhaEnpVyKCtEx63PoRm0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clients/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "clients",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateClient",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTkzNTMwLCJleHAiOjE3NzI1OTcxMzB9.rr0ZIXCKLyhTMGZjMVWRMvtNhaEnpVyKCtEx63PoRm0",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"cedula\":\"500400\",\r\n  \"nombre\":\"Alfonso\",\r\n  \"apellido\":\"Barrios\",\r\n  \"direccion\":\"Calle 21\",\r\n  \"telefono\":\"3178466562\",\r\n  \"email\":\"alfoso21@gmail.com\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/clients",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "clients"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateClient",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTkzODYyLCJleHAiOjE3NzI1OTc0NjJ9.gUpKpJF_0odnXiV-Pt1REkZt9BzfFD5oTvCfY7cdMtY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"cedula\":\"676767\",\r\n  \"nombre\":\"Carlos\",\r\n  \"apellido\":\"Gonzalez\",\r\n  \"direccion\":\"Calle 22\",\r\n  \"telefono\":\"3178466563\",\r\n  \"email\":\"alfoso20@gmail.com\",\r\n  \"activo\": \"true\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/clients/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "clients",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteClient",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTkwMzgxLCJleHAiOjE3NzI1OTM5ODF9.TpLpFItyQrv7inP9eWDMW_Z-TN4V_ub2dtQI3om3GfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clients/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "clients",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeactiaveClient",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyNTkwMzgxLCJleHAiOjE3NzI1OTM5ODF9.TpLpFItyQrv7inP9eWDMW_Z-TN4V_ub2dtQI3om3GfY",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/clients/1/act",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "clients",
+            "1",
+            "act"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

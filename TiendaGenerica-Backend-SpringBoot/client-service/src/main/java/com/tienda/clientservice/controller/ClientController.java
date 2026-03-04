@@ -42,4 +42,9 @@ public class ClientController {
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
+
+    @DeleteMapping("/{id}/act")
+    public void deactivate(@PathVariable Long id) {
+        service.deactivate(id);
+    }
 }
