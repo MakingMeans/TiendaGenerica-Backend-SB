@@ -16,6 +16,8 @@ public interface UserService {
 
     void delete(Long id);
 
+    void deactivate(Long id);
+
     void updateRoles(Long id, List<String> roles);
 
     void updateCredentials(Long id, UpdateCredentialsDTO dto);

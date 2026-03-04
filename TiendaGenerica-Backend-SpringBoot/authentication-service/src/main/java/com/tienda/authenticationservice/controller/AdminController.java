@@ -45,6 +45,11 @@ public class AdminController {
         service.delete(id);
     }
 
+    @DeleteMapping("/{id}/act")
+    public void deactivate(@PathVariable Long id) {
+        service.deactivate(id);
+    }
+
     @PatchMapping("/{id}/roles")
     public void updateRoles(@PathVariable Long id,
                             @RequestBody UpdateRolesDTO dto) {
