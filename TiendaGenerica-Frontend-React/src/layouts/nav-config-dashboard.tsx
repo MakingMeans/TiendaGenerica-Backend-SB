@@ -23,6 +23,16 @@ export const navData = [
     path: '/user',
     icon: icon('ic-user'),
   },
+    {
+    title: 'Client',
+    path: '/client',
+    icon: icon('ic-blog'),
+  },
+  {
+    title: 'Supplier',
+    path: '/supplier',
+    icon: icon('ic-cart'),
+  },
   {
     title: 'Product',
     path: '/products',
@@ -33,11 +43,7 @@ export const navData = [
       </Label>
     ),
   },
-  {
-    title: 'Blog',
-    path: '/blog',
-    icon: icon('ic-blog'),
-  },
+
   {
     title: 'Sign in',
     path: '/sign-in',
