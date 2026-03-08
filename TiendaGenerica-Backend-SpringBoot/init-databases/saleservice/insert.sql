@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 INSERT INTO ventas (numero_venta,id_cliente,id_usuario,total_bruto,total_iva,total_final,estado)
 VALUES ('VEN-001',1,1,30000,5700,35700,'PAGADA');
 

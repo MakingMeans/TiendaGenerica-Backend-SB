@@ -1,0 +1,219 @@
+{
+  "info": {
+    "_postman_id": "473df28f-a033-49f0-a347-5809d52d045a",
+    "name": "CatalogEndpoints",
+    "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50182838",
+    "_collection_link": "https://go.postman.co/collection/50182838-473df28f-a033-49f0-a347-5809d52d045a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GetAllProducts",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTE5MjIzLCJleHAiOjE3NzI5MjI4MjN9.BHmSAeOqKFGr0OYA2JWuOtayVOcuPdo3FyJYJY0CdjQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"codigo\": \"P010\",\r\n  \"nombre\": \"Café\",\r\n  \"descripcion\": \"Café molido premium\",\r\n  \"precioVenta\": 18000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 30,\r\n  \"stockMinimo\": 5,\r\n  \"stockMaximo\": 80,\r\n  \"proveedores\": [\r\n    {\r\n      \"nit\": \"900123\",\r\n      \"precioCompra\": 12000\r\n    },\r\n    {\r\n      \"nit\": \"900124\",\r\n      \"precioCompra\": 11500\r\n    }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/catalog",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"codigo\": \"P001\",\r\n  \"nombre\": \"Melocotones Premium\",\r\n  \"descripcion\": \"Producto actualizado\",\r\n  \"precioVenta\": 32000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 70,\r\n  \"stockMinimo\": 10,\r\n  \"stockMaximo\": 120,\r\n  \"proveedores\": [\r\n    {\r\n      \"nit\": \"900125\",\r\n      \"precioCompra\": 15000\r\n    },\r\n    {\r\n      \"nit\": \"900126\",\r\n      \"precioCompra\": 12500\r\n    }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/catalog/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UploadCSV",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "uuid": "bede673e-79b2-4262-a083-0ae631c6362b",
+              "src": "/C:/Users/david/Documents/UNBOSQUE/Semestre7/TiendaGenerica-TransaccionesComerciales/TiendaGenerica-Backend-SpringBoot/postman/catalogCSVinsert.csv"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/catalog/upload",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "upload"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

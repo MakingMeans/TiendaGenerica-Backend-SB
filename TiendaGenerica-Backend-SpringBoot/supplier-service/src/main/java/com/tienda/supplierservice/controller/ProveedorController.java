@@ -4,7 +4,6 @@ import com.tienda.supplierservice.dto.*;
 import com.tienda.supplierservice.service.ProveedorService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/suppliers")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
 public class ProveedorController {
 
     private final ProveedorService service;
@@ -25,6 +23,11 @@ public class ProveedorController {
     @GetMapping("/{id}")
     public ProveedorResponseDTO getById(@PathVariable Long id) {
         return service.findById(id);
+    }
+
+    @GetMapping("/nit/{nit}")
+    public ProveedorResponseDTO getByNit(@PathVariable String nit) {
+        return service.findByNit(nit);
     }
 
     @PostMapping
@@ -46,5 +49,10 @@ public class ProveedorController {
     @DeleteMapping("/{id}/act")
     public void deactivate(@PathVariable Long id) {
         service.deactivate(id);
+    }
+
+    @GetMapping("/active-nits")
+    public List<String> getActiveNits() {
+        return service.findActiveNits();
     }
 }

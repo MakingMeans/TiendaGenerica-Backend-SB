@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 INSERT INTO usuarios (cedula,nombre,apellido,correo,username,password,activo) VALUES
 ('1001','Admin','Principal','admin@tienda.com','admin','$2a$10$hSbdQSOrialhDy8VvYPRJuS3Juy8qbXH32boA64Kt4PT9P4bUVAc6',TRUE),
 ('1002','Carlos','Gerente','gerente@tienda.com','gerente','$2a$10$hSbdQSOrialhDy8VvYPRJuS3Juy8qbXH32boA64Kt4PT9P4bUVAc6',TRUE),

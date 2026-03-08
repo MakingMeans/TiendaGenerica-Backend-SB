@@ -25,6 +25,7 @@
         <module>authentication-service</module>
         <module>client-service</module>
         <module>supplier-service</module>
+        <module>catalog-service</module>
     </modules>
 
     <properties>

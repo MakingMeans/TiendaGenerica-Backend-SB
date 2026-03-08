@@ -17,7 +17,11 @@ public class GatewayValidationFilter implements GlobalFilter, Ordered {
     @Value("${security.jwt.secret}")
     private String secret;
 
+    @Value("${gateway.secret}")
+    private String gatewaySecret;
+
     private static final String AUTH_HEADER = "Authorization";
+    private static final String GATEWAY_SECRET_HEADER = "X-Gateway-Secret";
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -28,6 +32,14 @@ public class GatewayValidationFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
+        // Check if this is an internal service-to-service call
+        String gatewaySecretHeader = exchange.getRequest().getHeaders().getFirst(GATEWAY_SECRET_HEADER);
+        if (gatewaySecret.equals(gatewaySecretHeader)) {
+            // Valid internal call - bypass JWT validation
+            return chain.filter(exchange);
+        }
+
+        // External client - validate JWT token
         String header = exchange.getRequest().getHeaders().getFirst(AUTH_HEADER);
         if (header == null || !header.startsWith("Bearer ")) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
