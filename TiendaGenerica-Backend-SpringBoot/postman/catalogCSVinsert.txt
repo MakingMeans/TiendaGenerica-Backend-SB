@@ -1,0 +1,4 @@
+codigo,nombre,descripcion,precioVenta,iva,stockActual,stockMinimo,stockMaximo,nitProveedor,precioCompra
+P100,Arroz,Arroz blanco 1kg,15000,19,100,10,500,1,12000
+P101,Azucar,Azucar refinada 1kg,11000,19,200,20,600,1,8000
+P102,Sal,Sal fina 500g,3500,19,300,30,700,1,2000

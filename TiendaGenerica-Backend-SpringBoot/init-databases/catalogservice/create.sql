@@ -15,7 +15,7 @@ CREATE TABLE productos (
 CREATE TABLE producto_proveedor (
     id_prod_prov BIGINT AUTO_INCREMENT PRIMARY KEY,
     id_producto BIGINT NOT NULL,
-    id_proveedor BIGINT NOT NULL,
+    nit_proveedor VARCHAR(20) NOT NULL,
     precio_compra DECIMAL(12,2) NOT NULL,
     fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto)

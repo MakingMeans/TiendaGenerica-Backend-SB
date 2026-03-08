@@ -31,6 +31,12 @@ public class ProveedorServiceImpl implements ProveedorService {
     }
 
     @Override
+    public ProveedorResponseDTO findByNit(String nit) {
+        return map(repository.findByNit(nit)
+                .orElseThrow(() -> new ResourceNotFoundException("Supplier not found with NIT " + nit)));
+    }
+
+    @Override
     public void create(ProveedorRequestDTO dto) {
 
         if (repository.existsByNit(dto.getNit())) {
@@ -72,6 +78,14 @@ public class ProveedorServiceImpl implements ProveedorService {
             p.setActivo(true);
         }
         repository.save(p);
+    }
+
+    @Override
+    public List<String> findActiveNits() {
+        return repository.findByActivoTrue()
+                .stream()
+                .map(Proveedor::getNit)
+                .toList();
     }
 
     private Proveedor toEntity(ProveedorRequestDTO d) {
