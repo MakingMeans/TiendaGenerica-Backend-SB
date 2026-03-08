@@ -26,6 +26,7 @@
         <module>client-service</module>
         <module>supplier-service</module>
         <module>catalog-service</module>
+        <module>buy-service</module>
     </modules>
 
     <properties>
