@@ -3,6 +3,8 @@ package com.tienda.catalogservice.service;
 import com.tienda.catalogservice.dto.*;
 
 import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductoService {

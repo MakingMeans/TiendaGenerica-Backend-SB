@@ -1,5 +1,6 @@
 package com.tienda.buyservice.service.impl;
 
+import com.tienda.buyservice.client.ProductClient;
 import com.tienda.buyservice.dto.*;
 import com.tienda.buyservice.entity.*;
 import com.tienda.buyservice.exception.ResourceNotFoundException;
@@ -19,6 +20,8 @@ public class BuyServiceImpl implements BuyService {
 
     private final BuyRepository buyRepository;
 
+    private final ProductClient productClient;
+
     @Override
     public List<BuyDTO> findAll() {
         return buyRepository.findAll()
@@ -37,6 +40,24 @@ public class BuyServiceImpl implements BuyService {
 
     @Override
     public BuyDTO create(BuyDTO dto) {
+
+        dto.getDetalles().forEach(detail -> {
+            try {
+                productClient.getProductById(detail.getIdProducto());
+            } catch (feign.FeignException.NotFound e) {
+                throw new RuntimeException(
+                        "Product not found: " + detail.getIdProducto()
+                );
+            }
+        });
+
+        try {
+            productClient.getInternalById(dto.getIdProveedor());
+        } catch (feign.FeignException.NotFound e) {
+            throw new RuntimeException(
+                    "Supplier not found: " + dto.getIdProveedor()
+            );
+        }
 
         if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("La compra debe tener al menos un detalle");
