@@ -11,12 +11,3 @@ CREATE TABLE productos (
     activo BOOLEAN DEFAULT TRUE,
     fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE producto_proveedor (
-    id_prod_prov BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_producto BIGINT NOT NULL,
-    nit_proveedor VARCHAR(20) NOT NULL,
-    precio_compra DECIMAL(12,2) NOT NULL,
-    fecha_actualizacion DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -1,9 +1,9 @@
 package com.tienda.catalogservice.service.impl;
 
 import com.tienda.catalogservice.dto.*;
-import com.tienda.catalogservice.entity.*;
+import com.tienda.catalogservice.entity.Producto;
 import com.tienda.catalogservice.exception.ResourceNotFoundException;
-import com.tienda.catalogservice.repository.*;
+import com.tienda.catalogservice.repository.ProductoRepository;
 import com.tienda.catalogservice.service.ProductoService;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,11 +23,10 @@ import java.util.List;
 public class ProductoServiceImpl implements ProductoService {
 
     private final ProductoRepository productoRepository;
-    private final ProductoProveedorRepository productoProveedorRepository;
 
     @Override
     public List<ProductoResponseDTO> findAll() {
-        return productoRepository.findAllWithProveedores()
+        return productoRepository.findByActivoTrueOrderByIdProducto()
                 .stream()
                 .map(this::map)
                 .toList();
@@ -38,6 +36,65 @@ public class ProductoServiceImpl implements ProductoService {
     public ProductoResponseDTO findById(Long id) {
         return map(productoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado")));
+    }
+
+    @Override
+    @Transactional
+    public void create(ProductoRequestDTO dto) {
+
+        Producto p = new Producto();
+
+        p.setCodigo(generarCodigo());
+        p.setNombre(dto.getNombre());
+        p.setDescripcion(dto.getDescripcion());
+        p.setPrecioVenta(dto.getPrecioVenta());
+        p.setIva(dto.getIva());
+
+        p.setStockActual(dto.getStockActual() != null ? dto.getStockActual() : 0);
+        p.setStockMinimo(dto.getStockMinimo() != null ? dto.getStockMinimo() : 0);
+        p.setStockMaximo(dto.getStockMaximo() != null ? dto.getStockMaximo() : 0);
+
+        p.setActivo(true);
+        p.setFechaCreacion(LocalDateTime.now());
+
+        productoRepository.save(p);
+    }
+
+    @Override
+    public void update(Long id, ProductoRequestDTO dto) {
+
+        Producto p = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+
+        p.setNombre(dto.getNombre());
+        p.setDescripcion(dto.getDescripcion());
+        p.setPrecioVenta(dto.getPrecioVenta());
+        p.setIva(dto.getIva());
+
+        p.setStockActual(dto.getStockActual());
+        p.setStockMinimo(dto.getStockMinimo());
+        p.setStockMaximo(dto.getStockMaximo());
+
+        productoRepository.save(p);
+    }
+
+    @Override
+    public void delete(Long id) {
+        productoRepository.deleteById(id);
+    }
+
+    @Override
+    public void deactivate(Long id) {
+
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
+
+        if(producto.getActivo()){
+            producto.setActivo(false);
+        }else{
+            producto.setActivo(true);
+        }
+        productoRepository.save(producto);
     }
 
     @Override
@@ -60,103 +117,17 @@ public class ProductoServiceImpl implements ProductoService {
         }
 
         producto.setStockActual(nuevoStock);
-
         productoRepository.save(producto);
     }
 
-    @Override
-    public void create(ProductoRequestDTO dto) {
+    private String generarCodigo() {
 
-        if (productoRepository.findByCodigo(dto.getCodigo()).isPresent()) {
-            throw new RuntimeException("Producto con código ya existe");
-        }
+        Long total = productoRepository.count() + 1;
 
-        Producto p = new Producto();
-
-        p.setCodigo(dto.getCodigo());
-        p.setNombre(dto.getNombre());
-        p.setDescripcion(dto.getDescripcion());
-        p.setPrecioVenta(dto.getPrecioVenta());
-        p.setIva(dto.getIva());
-
-        p.setStockActual(dto.getStockActual() != null ? dto.getStockActual() : 0);
-        p.setStockMinimo(dto.getStockMinimo() != null ? dto.getStockMinimo() : 0);
-        p.setStockMaximo(dto.getStockMaximo() != null ? dto.getStockMaximo() : 0);
-
-        p.setActivo(true);
-        p.setFechaCreacion(LocalDateTime.now());
-
-        productoRepository.save(p);
-
-        if (dto.getProveedores() != null && !dto.getProveedores().isEmpty()) {
-            for (ProductoProveedorRequestDTO prov : dto.getProveedores()) {
-                ProductoProveedor pp = new ProductoProveedor();
-                pp.setIdProducto(p.getIdProducto());
-                pp.setNitProveedor(prov.getNit());
-                pp.setPrecioCompra(prov.getPrecioCompra());
-                productoProveedorRepository.save(pp);
-            }
-        }
-    }
-
-    @Override
-    public void update(Long id, ProductoRequestDTO dto) {
-
-        Producto p = productoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-
-        p.setNombre(dto.getNombre());
-        p.setDescripcion(dto.getDescripcion());
-        p.setPrecioVenta(dto.getPrecioVenta());
-        p.setIva(dto.getIva());
-
-        p.setStockActual(dto.getStockActual());
-        p.setStockMinimo(dto.getStockMinimo());
-        p.setStockMaximo(dto.getStockMaximo());
-
-        productoRepository.save(p);
-
-        if (dto.getProveedores() != null) {
-            // eliminar relaciones anteriores
-            productoProveedorRepository.deleteByIdProducto(id);
-            for (ProductoProveedorRequestDTO prov : dto.getProveedores()) {
-                ProductoProveedor pp = new ProductoProveedor();
-                pp.setIdProducto(id);
-                pp.setNitProveedor(prov.getNit());
-                pp.setPrecioCompra(prov.getPrecioCompra());
-                productoProveedorRepository.save(pp);
-            }
-        }
-    }
-
-    @Override
-    public void delete(Long id) {
-
-        Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
-
-        // eliminar relaciones primero
-        productoProveedorRepository.deleteByIdProducto(id);
-
-        // eliminar producto
-        productoRepository.delete(producto);
+        return String.format("PROD-%04d", total);
     }
 
     private ProductoResponseDTO map(Producto p) {
-
-        List<ProductoProveedorDTO> proveedores =
-                p.getProductoProveedores()
-                        .stream()
-                        .map(pp -> {
-
-                            ProductoProveedorDTO dto = new ProductoProveedorDTO();
-
-                            dto.setNit(pp.getNitProveedor());
-                            dto.setPrecioCompra(pp.getPrecioCompra());
-
-                            return dto;
-                        })
-                        .toList();
 
         return new ProductoResponseDTO(
                 p.getIdProducto(),
@@ -166,8 +137,7 @@ public class ProductoServiceImpl implements ProductoService {
                 p.getPrecioVenta(),
                 p.getIva(),
                 p.getStockActual(),
-                p.getActivo(),
-                proveedores
+                p.getActivo()
         );
     }
 
@@ -194,37 +164,19 @@ public class ProductoServiceImpl implements ProductoService {
 
                 String[] parts = line.split(",");
 
-                if (parts.length < 10) {
+                if (parts.length < 7) {
                     throw new RuntimeException("CSV mal formado: " + line);
-                }
-
-                String codigo = parts[0].trim();
-
-                if (productoRepository.findByCodigo(codigo).isPresent()) {
-                    continue;
                 }
 
                 ProductoRequestDTO dto = new ProductoRequestDTO();
 
-                dto.setCodigo(codigo);
-                dto.setNombre(parts[1].trim());
-                dto.setDescripcion(parts[2].trim());
-                dto.setPrecioVenta(new BigDecimal(parts[3].trim()));
-                dto.setIva(new BigDecimal(parts[4].trim()));
-                dto.setStockActual(Integer.parseInt(parts[5].trim()));
-                dto.setStockMinimo(Integer.parseInt(parts[6].trim()));
-                dto.setStockMaximo(Integer.parseInt(parts[7].trim()));
-
-                // crear proveedor del CSV
-                ProductoProveedorRequestDTO proveedor = new ProductoProveedorRequestDTO();
-
-                proveedor.setNit(parts[8].trim());
-                proveedor.setPrecioCompra(new BigDecimal(parts[9].trim()));
-
-                List<ProductoProveedorRequestDTO> proveedores = new ArrayList<>();
-                proveedores.add(proveedor);
-
-                dto.setProveedores(proveedores);
+                dto.setNombre(parts[0].trim());
+                dto.setDescripcion(parts[1].trim());
+                dto.setPrecioVenta(new BigDecimal(parts[2].trim()));
+                dto.setIva(new BigDecimal(parts[3].trim()));
+                dto.setStockActual(Integer.parseInt(parts[4].trim()));
+                dto.setStockMinimo(Integer.parseInt(parts[5].trim()));
+                dto.setStockMaximo(Integer.parseInt(parts[6].trim()));
 
                 create(dto);
             }

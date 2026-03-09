@@ -4,7 +4,6 @@ import com.tienda.catalogservice.dto.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductoService {
@@ -18,6 +17,8 @@ public interface ProductoService {
     void update(Long id, ProductoRequestDTO dto);
 
     void delete(Long id);
+
+    void deactivate(Long id);
 
     void uploadCsv(MultipartFile file);
 
