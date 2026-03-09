@@ -16,7 +16,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTE5MjIzLCJleHAiOjE3NzI5MjI4MjN9.BHmSAeOqKFGr0OYA2JWuOtayVOcuPdo3FyJYJY0CdjQ",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDIwMTg4LCJleHAiOjE3NzMwMjM3ODh9.EdCL0YXXtoCVSM4JhHn6QFFI5h0zs4jIcfFQguxMINs",
               "type": "string"
             }
           ]
@@ -75,7 +75,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTI2NzgwLCJleHAiOjE3NzI5MzAzODB9.eabqqFb0mnRamVfDM7FgmkRrig6yry8vmu1-lcv6ULg",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDIwMTg4LCJleHAiOjE3NzMwMjM3ODh9.EdCL0YXXtoCVSM4JhHn6QFFI5h0zs4jIcfFQguxMINs",
               "type": "string"
             }
           ]
@@ -261,6 +261,26 @@
             "suppliers",
             "1",
             "act"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetForeignProveedor",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/foreignsuppliers/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "foreignsuppliers",
+            "2"
           ]
         }
       },

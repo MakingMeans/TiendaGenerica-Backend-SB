@@ -16,7 +16,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
               "type": "string"
             }
           ]
@@ -45,7 +45,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTE5MjIzLCJleHAiOjE3NzI5MjI4MjN9.BHmSAeOqKFGr0OYA2JWuOtayVOcuPdo3FyJYJY0CdjQ",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
               "type": "string"
             }
           ]
@@ -75,7 +75,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
               "type": "string"
             }
           ]
@@ -84,7 +84,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"codigo\": \"P010\",\r\n  \"nombre\": \"Café\",\r\n  \"descripcion\": \"Café molido premium\",\r\n  \"precioVenta\": 18000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 30,\r\n  \"stockMinimo\": 5,\r\n  \"stockMaximo\": 80,\r\n  \"proveedores\": [\r\n    {\r\n      \"nit\": \"900123\",\r\n      \"precioCompra\": 12000\r\n    },\r\n    {\r\n      \"nit\": \"900124\",\r\n      \"precioCompra\": 11500\r\n    }\r\n  ]\r\n}",
+          "raw": "{\r\n  \"nombre\": \"Arroz\",\r\n  \"descripcion\": \"Arroz premium\",\r\n  \"precioVenta\": 15000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 100,\r\n  \"stockMinimo\": 10,\r\n  \"stockMaximo\": 500\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -113,7 +113,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
               "type": "string"
             }
           ]
@@ -122,7 +122,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n  \"codigo\": \"P001\",\r\n  \"nombre\": \"Melocotones Premium\",\r\n  \"descripcion\": \"Producto actualizado\",\r\n  \"precioVenta\": 32000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 70,\r\n  \"stockMinimo\": 10,\r\n  \"stockMaximo\": 120,\r\n  \"proveedores\": [\r\n    {\r\n      \"nit\": \"900125\",\r\n      \"precioCompra\": 15000\r\n    },\r\n    {\r\n      \"nit\": \"900126\",\r\n      \"precioCompra\": 12500\r\n    }\r\n  ]\r\n}",
+          "raw": "{\r\n  \"nombre\": \"Arroz EDIT\",\r\n  \"descripcion\": \"Arroz premium EDIT\",\r\n  \"precioVenta\": 15000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 100,\r\n  \"stockMinimo\": 10,\r\n  \"stockMaximo\": 500\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -152,7 +152,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
               "type": "string"
             }
           ]
@@ -175,6 +175,37 @@
       "response": []
     },
     {
+      "name": "DeactivateProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog/1/act",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1",
+            "act"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
       "name": "UploadCSV",
       "request": {
         "auth": {
@@ -182,7 +213,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzcyOTMxOTE3LCJleHAiOjE3NzI5MzU1MTd9.Yarh8nIyHXGRvznCzL26NqxuAj6iABL0nUfU99s2HbE",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
               "type": "string"
             }
           ]
@@ -210,6 +241,53 @@
           "path": [
             "catalog",
             "upload"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetForeignProduct",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/foreigncatalog/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "foreigncatalog",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "IncrementStock",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/foreigncatalog/2/stock?cantidad=20",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "foreigncatalog",
+            "2",
+            "stock"
+          ],
+          "query": [
+            {
+              "key": "cantidad",
+              "value": "20"
+            }
           ]
         }
       },

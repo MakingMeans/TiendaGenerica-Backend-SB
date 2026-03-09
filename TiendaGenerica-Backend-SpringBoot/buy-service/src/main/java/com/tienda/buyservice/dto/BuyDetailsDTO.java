@@ -15,4 +15,5 @@ public class BuyDetailsDTO {
     private Integer cantidad;
     private BigDecimal precioUnitario;
     private BigDecimal total;
+
 }

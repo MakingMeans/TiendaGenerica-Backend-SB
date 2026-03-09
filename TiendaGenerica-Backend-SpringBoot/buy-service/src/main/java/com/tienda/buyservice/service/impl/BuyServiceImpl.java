@@ -1,5 +1,6 @@
 package com.tienda.buyservice.service.impl;
 
+import com.tienda.buyservice.client.ProductClient;
 import com.tienda.buyservice.dto.*;
 import com.tienda.buyservice.entity.*;
 import com.tienda.buyservice.exception.ResourceNotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +20,8 @@ import java.util.stream.Collectors;
 public class BuyServiceImpl implements BuyService {
 
     private final BuyRepository buyRepository;
+
+    private final ProductClient productClient;
 
     @Override
     public List<BuyDTO> findAll() {
@@ -35,15 +39,60 @@ public class BuyServiceImpl implements BuyService {
         return toDTO(buy);
     }
 
+    private String generarNumeroCompra() {
+
+        Optional<Buy> lastBuy = buyRepository.findTopByOrderByIdCompraDesc();
+
+        int nextNumber = 1;
+
+        if (lastBuy.isPresent()) {
+
+            String lastNumero = lastBuy.get().getNumeroCompra();
+
+            String numberPart = lastNumero.substring(5); // quita "COMP-"
+
+            nextNumber = Integer.parseInt(numberPart) + 1;
+        }
+
+        return String.format("COMP-%05d", nextNumber);
+    }
+
     @Override
     public BuyDTO create(BuyDTO dto) {
+
+        dto.getDetalles().forEach(detail -> {
+            try {
+                productClient.getProductById(detail.getIdProducto());
+            } catch (feign.FeignException.NotFound e) {
+                throw new RuntimeException(
+                        "Product not found: " + detail.getIdProducto()
+                );
+            }
+        });
+
+        try {
+            productClient.getInternalById(dto.getIdProveedor());
+        } catch (feign.FeignException.NotFound e) {
+            throw new RuntimeException(
+                    "Supplier not found: " + dto.getIdProveedor()
+            );
+        }
 
         if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("La compra debe tener al menos un detalle");
         }
 
+        dto.getDetalles().forEach(detalle -> {
+
+            productClient.incrementarStock(
+                    detalle.getIdProducto(),
+                    detalle.getCantidad()
+            );
+
+        });
+
         Buy buy = new Buy();
-        buy.setNumeroCompra(dto.getNumeroCompra());
+        buy.setNumeroCompra(generarNumeroCompra());
         buy.setIdProveedor(dto.getIdProveedor());
         buy.setEstado(dto.getEstado());
 

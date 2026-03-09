@@ -104,7 +104,7 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     private ProveedorResponseDTO map(Proveedor p) {
         return new ProveedorResponseDTO(
-                p.getId(),
+                p.getIdProveedor(),
                 p.getNit(),
                 p.getNombre(),
                 p.getDireccion(),

@@ -11,9 +11,7 @@ public interface ProveedorRepository extends JpaRepository<Proveedor, Long> {
 
     boolean existsByNit(String nit);
 
-    // new method for finding a supplier by its NIT
     Optional<Proveedor> findByNit(String nit);
 
-    // helper for active-nits endpoint
     List<Proveedor> findByActivoTrue();
 }

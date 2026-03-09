@@ -3,6 +3,7 @@ package com.tienda.catalogservice.service;
 import com.tienda.catalogservice.dto.*;
 
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface ProductoService {
@@ -17,5 +18,9 @@ public interface ProductoService {
 
     void delete(Long id);
 
+    void deactivate(Long id);
+
     void uploadCsv(MultipartFile file);
+
+    void incrementarStock(Long idProducto, Integer cantidad);
 }
