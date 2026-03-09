@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,24 @@ public class BuyServiceImpl implements BuyService {
                 .orElseThrow(() -> new ResourceNotFoundException("Buy not found"));
 
         return toDTO(buy);
+    }
+
+    private String generarNumeroCompra() {
+
+        Optional<Buy> lastBuy = buyRepository.findTopByOrderByIdCompraDesc();
+
+        int nextNumber = 1;
+
+        if (lastBuy.isPresent()) {
+
+            String lastNumero = lastBuy.get().getNumeroCompra();
+
+            String numberPart = lastNumero.substring(5); // quita "COMP-"
+
+            nextNumber = Integer.parseInt(numberPart) + 1;
+        }
+
+        return String.format("COMP-%05d", nextNumber);
     }
 
     @Override
@@ -73,7 +92,7 @@ public class BuyServiceImpl implements BuyService {
         });
 
         Buy buy = new Buy();
-        buy.setNumeroCompra(dto.getNumeroCompra());
+        buy.setNumeroCompra(generarNumeroCompra());
         buy.setIdProveedor(dto.getIdProveedor());
         buy.setEstado(dto.getEstado());
 
