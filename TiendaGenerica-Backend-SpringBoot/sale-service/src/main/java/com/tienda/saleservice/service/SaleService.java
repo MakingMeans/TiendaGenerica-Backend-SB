@@ -12,5 +12,6 @@ public interface SaleService {
 
     SaleDTO getSaleById(Long id);
 
-    void delete(Long id);
+    void deleteSale(Long id);
+
 }

@@ -7,7 +7,7 @@ CREATE TABLE ventas (
     total_bruto DECIMAL(14,2),
     total_iva DECIMAL(14,2),
     total_final DECIMAL(14,2),
-    estado VARCHAR(50)
+    estado VARCHAR(50) DEFAULT 'CONFIRMADA'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE detalle_ventas (

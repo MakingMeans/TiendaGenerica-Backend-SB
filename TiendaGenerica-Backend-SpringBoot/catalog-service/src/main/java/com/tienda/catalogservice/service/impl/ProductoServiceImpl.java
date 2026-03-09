@@ -26,7 +26,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public List<ProductoResponseDTO> findAll() {
-        return productoRepository.findByActivoTrueOrderByIdProducto()
+        return productoRepository.findAll()
                 .stream()
                 .map(this::map)
                 .toList();
