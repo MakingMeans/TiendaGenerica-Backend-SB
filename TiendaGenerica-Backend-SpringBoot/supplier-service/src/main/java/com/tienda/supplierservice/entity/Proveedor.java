@@ -15,7 +15,7 @@ public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_proveedor")
-    private Long id;
+    private Long idProveedor;
 
     @Column(nullable = false, unique = true, length = 20)
     private String nit;

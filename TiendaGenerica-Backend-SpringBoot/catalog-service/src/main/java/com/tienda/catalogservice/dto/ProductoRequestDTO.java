@@ -2,7 +2,6 @@ package com.tienda.catalogservice.dto;
 
 import lombok.Data;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 public class ProductoRequestDTO {
@@ -17,6 +16,4 @@ public class ProductoRequestDTO {
     private Integer stockActual;
     private Integer stockMinimo;
     private Integer stockMaximo;
-
-    private List<ProductoProveedorRequestDTO> proveedores;
 }

@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
 public class ProductoResponseDTO {
 
-    private Long id;
+    private Long idProducto;
     private String codigo;
     private String nombre;
     private String descripcion;
@@ -21,6 +20,4 @@ public class ProductoResponseDTO {
     private Integer stockActual;
 
     private Boolean activo;
-
-    private List<ProductoProveedorDTO> proveedores;
 }

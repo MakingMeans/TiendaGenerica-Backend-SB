@@ -4,6 +4,7 @@ import com.tienda.supplierservice.dto.*;
 import com.tienda.supplierservice.service.ProveedorService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/suppliers")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
 public class ProveedorController {
 
     private final ProveedorService service;

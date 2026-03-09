@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class ProveedorResponseDTO {
 
-    private Long id;
+    private Long idProveedor;
     private String nit;
     private String nombre;
     private String direccion;

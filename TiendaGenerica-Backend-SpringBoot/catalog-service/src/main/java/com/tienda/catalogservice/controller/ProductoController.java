@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/catalog")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+@PreAuthorize("hasAnyRole('ADMIN','GERENTE','INVENTARIO')")
 public class ProductoController {
 
     private final ProductoService service;
@@ -42,6 +42,11 @@ public class ProductoController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @DeleteMapping("/{id}/act")
+    public void deactivate(@PathVariable Long id) {
+        service.deactivate(id);
     }
 
     @PostMapping("/upload")

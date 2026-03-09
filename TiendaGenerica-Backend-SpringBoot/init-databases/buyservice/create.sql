@@ -14,5 +14,5 @@ CREATE TABLE detalle_compras (
     cantidad INT NOT NULL,
     precio_unitario DECIMAL(12,2) NOT NULL,
     total DECIMAL(14,2),
-    FOREIGN KEY (compra) REFERENCES compras(compra)
+    FOREIGN KEY (id_compra) REFERENCES compras(id_compra)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
