@@ -52,7 +52,7 @@ public class BuyServiceImpl implements BuyService {
 
             String lastNumero = lastBuy.get().getNumeroCompra();
 
-            String numberPart = lastNumero.substring(5); // quita "COMP-"
+            String numberPart = lastNumero.substring(5);
 
             nextNumber = Integer.parseInt(numberPart) + 1;
         }
@@ -63,6 +63,10 @@ public class BuyServiceImpl implements BuyService {
     @Override
     public BuyDTO create(BuyDTO dto) {
 
+        if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+            throw new IllegalArgumentException("La compra debe tener al menos un detalle");
+        }
+        
         dto.getDetalles().forEach(detail -> {
             try {
                 productClient.getProductById(detail.getIdProducto());

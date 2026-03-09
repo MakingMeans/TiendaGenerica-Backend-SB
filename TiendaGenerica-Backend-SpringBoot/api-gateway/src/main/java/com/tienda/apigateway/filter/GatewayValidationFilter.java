@@ -28,9 +28,14 @@ public class GatewayValidationFilter implements GlobalFilter, Ordered {
         String path = exchange.getRequest().getPath().value();
 
         // bypass validation for authentication endpoints
-        if (path.startsWith("/auth/")) {
+        if (path.startsWith("/auth/")) { // incluye login y signup
             return chain.filter(exchange);
         }
+
+        /*// allow swagger / openapi
+        if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-ui.html")) {
+            return chain.filter(exchange);
+        }*/
 
         // Check if this is an internal service-to-service call
         String gatewaySecretHeader = exchange.getRequest().getHeaders().getFirst(GATEWAY_SECRET_HEADER);

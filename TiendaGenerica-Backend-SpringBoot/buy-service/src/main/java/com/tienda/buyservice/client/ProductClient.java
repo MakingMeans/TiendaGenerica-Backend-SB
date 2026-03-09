@@ -16,11 +16,8 @@ public interface ProductClient {
     @GetMapping("/foreigncatalog/{id}")
     Object getProductById(@PathVariable("id") Long id);
 
-
     @PutMapping("/foreigncatalog/{id}/stock")
     void incrementarStock(
             @PathVariable("id") Long id,
             @RequestParam("cantidad") Integer cantidad);
-
-
 }
