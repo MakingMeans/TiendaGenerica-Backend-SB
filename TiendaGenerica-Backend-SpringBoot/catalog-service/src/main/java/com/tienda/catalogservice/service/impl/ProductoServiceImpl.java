@@ -26,7 +26,7 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public List<ProductoResponseDTO> findAll() {
-        return productoRepository.findByActivoTrueOrderByIdProducto()
+        return productoRepository.findAll()
                 .stream()
                 .map(this::map)
                 .toList();
@@ -116,7 +116,25 @@ public class ProductoServiceImpl implements ProductoService {
             );
         }
 
+
+
         producto.setStockActual(nuevoStock);
+        productoRepository.save(producto);
+    }
+
+    @Override
+    @Transactional
+    public void updateStock(Long idProducto, Integer cantidad) {
+
+        Producto producto = productoRepository.findById(idProducto)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+
+        if(producto.getStockActual() < cantidad){
+            throw new RuntimeException("Stock insuficiente");
+        }
+
+        producto.setStockActual(producto.getStockActual() - cantidad);
+
         productoRepository.save(producto);
     }
 

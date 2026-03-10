@@ -9,20 +9,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(
         name = "api-gateway",
-        configuration = FeignConfig.class
+        configuration = FeignConfig.class,
+        contextId = "productClient"
 )
 public interface ProductClient {
 
-    @GetMapping("/catalog/internal/{id}")
+    @GetMapping("/foreigncatalog/{id}")
     Object getProductById(@PathVariable("id") Long id);
 
-    @GetMapping("/suppliers/internal/{id}")
-    Object getInternalById(@PathVariable("id") Long id);
-
-    @PutMapping("/catalog/internal/{id}/stock")
+    @PutMapping("/foreigncatalog/{id}/stock")
     void incrementarStock(
             @PathVariable("id") Long id,
             @RequestParam("cantidad") Integer cantidad);
-
-
 }

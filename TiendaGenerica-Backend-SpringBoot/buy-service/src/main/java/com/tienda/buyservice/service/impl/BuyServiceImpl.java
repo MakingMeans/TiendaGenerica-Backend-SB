@@ -1,6 +1,7 @@
 package com.tienda.buyservice.service.impl;
 
 import com.tienda.buyservice.client.ProductClient;
+import com.tienda.buyservice.client.SupplierClient;
 import com.tienda.buyservice.dto.*;
 import com.tienda.buyservice.entity.*;
 import com.tienda.buyservice.exception.ResourceNotFoundException;
@@ -22,6 +23,8 @@ public class BuyServiceImpl implements BuyService {
     private final BuyRepository buyRepository;
 
     private final ProductClient productClient;
+
+    private final SupplierClient supplierClient;
 
     @Override
     public List<BuyDTO> findAll() {
@@ -49,7 +52,7 @@ public class BuyServiceImpl implements BuyService {
 
             String lastNumero = lastBuy.get().getNumeroCompra();
 
-            String numberPart = lastNumero.substring(5); // quita "COMP-"
+            String numberPart = lastNumero.substring(5);
 
             nextNumber = Integer.parseInt(numberPart) + 1;
         }
@@ -60,6 +63,10 @@ public class BuyServiceImpl implements BuyService {
     @Override
     public BuyDTO create(BuyDTO dto) {
 
+        if (dto.getDetalles() == null || dto.getDetalles().isEmpty()) {
+            throw new IllegalArgumentException("La compra debe tener al menos un detalle");
+        }
+        
         dto.getDetalles().forEach(detail -> {
             try {
                 productClient.getProductById(detail.getIdProducto());
@@ -71,7 +78,7 @@ public class BuyServiceImpl implements BuyService {
         });
 
         try {
-            productClient.getInternalById(dto.getIdProveedor());
+            supplierClient.getInternalById(dto.getIdProveedor());
         } catch (feign.FeignException.NotFound e) {
             throw new RuntimeException(
                     "Supplier not found: " + dto.getIdProveedor()
@@ -94,7 +101,7 @@ public class BuyServiceImpl implements BuyService {
         Buy buy = new Buy();
         buy.setNumeroCompra(generarNumeroCompra());
         buy.setIdProveedor(dto.getIdProveedor());
-        buy.setEstado(dto.getEstado());
+        buy.setEstado("CREADA");
 
         List<BuyDetails> details = dto.getDetalles()
                 .stream()
