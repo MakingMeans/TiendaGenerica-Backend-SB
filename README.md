@@ -1,149 +1,219 @@
 # TiendaGenerica-TransaccionesComerciales
 
-Sistema web para la gestión de una tienda desarrollado con **Spring Boot + MySQL**, como proyecto académico. Aplicación web en **Java** que permite gestionar las transacciones comerciales de una tienda, administrando usuarios, clientes, proveedores, productos y ventas.
+Sistema web para la gestión de transacciones comerciales de una tienda desarrollado con una **arquitectura de microservicios** utilizando **Spring Boot + Spring Cloud + React + MySQL**.
+
+El sistema permite administrar usuarios, clientes, proveedores, productos y ventas, además de gestionar autenticación segura mediante **JWT** y **Spring Security**.
 
 ---
 
-# Funcionalidades principales
+# Arquitectura del Sistema
 
-- Login de usuarios
-- Gestión de usuarios
-- Gestión de clientes
-- Gestión de proveedores
-- Carga masiva de productos (CSV)
-- Registro de ventas
-- Reportes y consultas
+El sistema está dividido en dos grandes componentes:
 
----
+### Backend
 
-# Modulos
+Arquitectura de **microservicios con Spring Boot**.
 
-## Login del sistema
-Ingresar con usuario y contraseña para acceder al sistema de la tienda.  
+Servicios:
 
-Usuario inicial:
-admininicial / admin123456
+* **Eureka Server** → Registro y descubrimiento de servicios
+* **API Gateway** → Punto de entrada único para el frontend
+* **Authentication Service** → Autenticación y generación de JWT
+* **Client Service** → Gestión de clientes
+* **Supplier Service** → Gestión de proveedores
+* **Catalog Service** → Gestión de productos
+* **Buy Service** → Gestión de compras
+* **Sale Service** → Gestión de ventas
 
----
-
-## Gestión de usuarios
-El administrador puede crear, editar, eliminar y listar usuarios para controlar quién puede usar el sistema.
-
-Datos:
-- Cédula
-- Nombre
-- Correo
-- Usuario
-- Contraseña
+Todos los servicios se registran automáticamente en **Eureka**.
 
 ---
 
-## Gestión de clientes
-El empleado puede registrar y administrar clientes para poder realizar ventas.
+### Frontend
 
-Datos:
-- Cédula
-- Nombre
-- Dirección
-- Teléfono
-- Correo
+Aplicación web desarrollada con **React**.
+
+Se comunica con el backend a través del **API Gateway**.
 
 ---
 
-## Gestión de proveedores
-El administrador puede gestionar proveedores para asociarlos a los productos.
-
-Datos:
-- NIT
-- Nombre
-- Dirección
-- Teléfono
-- Ciudad
-
----
-
-## Carga de productos por CSV
-El usuario puede cargar productos desde un archivo CSV para registrar múltiples productos rápidamente.
-
-Campos:
-- código_producto
-- nombre_producto
-- nit_proveedor
-- precio_compra
-- iva_compra
-- precio_venta
-
-Validaciones:
-- Formato CSV
-- NIT existente
-
----
-
-## Registro de ventas
-El cajero puede registrar ventas de productos para generar facturas y totales.
-
-Funciones:
-- Buscar cliente
-- Agregar productos
-- Calcular IVA
-- Calcular total
-- Guardar venta y detalle
-
-Tablas:
-- ventas
-- detalleVentas
-
----
-
-## Reportes y consultas
-El administrador consultar información para analizar el negocio.
-
-Reportes:
-- Listado de usuarios
-- Listado de clientes
-- Total de ventas por cliente
-
----
-
-# Tecnologías
+# Arquitectura Técnica
 
 Backend:
-- Java JDK 11
-- Spring Boot 2.4.5
-- Maven
-- Tomcat
+
+* Java 17
+* Spring Boot 3
+* Spring Security
+* Spring Cloud
+* Netflix Eureka
+* API Gateway
+* JWT Authentication
+* Maven
 
 Base de datos:
-- MySQL 8
+
+* MySQL 8
+* Docker Compose
+
+Frontend:
+
+* React
+* Node.js
+* Vite
 
 Control de versiones:
-- Git + GitHub
+
+* Git
+* GitHub
 
 ---
 
-# Requerimientos
+# Estructura del Proyecto
+
+```
+TiendaGenerica-TransaccionesComerciales
+│
+├── TiendaGenerica-Backend-SpringBoot
+│   ├── api-gateway
+│   ├── authentication-service
+│   ├── buy-service
+│   ├── catalog-service
+│   ├── client-service
+│   ├── eureka-server
+│   ├── sale-service
+│   ├── supplier-service
+│   ├── init-databases
+│   └── docker-compose.yml
+│
+├── TiendaGenerica-Frontend-React
+│
+├── start_system.bat
+├── stop_system.bat
+└── setup_env.bat
+```
+
+---
+
+# Funcionalidades del Sistema
+
+## Autenticación
+
+* Registro de usuarios
+* Inicio de sesión
+* Generación de token JWT
+* Protección de endpoints mediante roles
+
+Roles del sistema:
+
+* ADMIN
+* GERENTE
+* CAJERO
+
+---
+
+## Gestión de Usuarios
+
+Permite administrar usuarios del sistema.
+
+Funciones:
+
+* Crear usuarios
+* Editar usuarios
+* Eliminar usuarios
+* Asignar roles
+
+---
+
+## Gestión de Clientes
+
+Permite registrar y administrar clientes.
+
+Datos registrados:
+
+* Cédula
+* Nombre
+* Dirección
+* Teléfono
+* Correo
+
+---
+
+## Gestión de Proveedores
+
+Administración de proveedores asociados a productos.
+
+Datos:
+
+* NIT
+* Nombre
+* Dirección
+* Teléfono
+* Ciudad
+
+---
+
+## Gestión de Productos
+
+Administración del catálogo de productos de la tienda.
+
+Funciones:
+
+* Crear productos
+* Editar productos
+* Eliminar productos
+* Consultar inventario
+
+---
+
+## Gestión de Compras
+
+Registro de compras realizadas a proveedores.
+
+Funciones:
+
+* Registrar compra
+* Asociar productos
+* Actualizar inventario
+
+---
+
+## Gestión de Ventas
+
+Registro de ventas realizadas a clientes.
+
+Funciones:
+
+* Buscar cliente
+* Agregar productos
+* Calcular IVA
+* Calcular total
+* Generar factura
+
+---
+
+# Requisitos del Sistema
 
 Instalar:
 
-- JDK 11 → https://adoptium.net/temurin/releases/?version=11
-- Maven 3.6+ → https://maven.apache.org/download.cgi
-- MySQL 8 → https://dev.mysql.com/downloads/installer/
-- MySQL Workbench → https://dev.mysql.com/downloads/workbench/
-- Eclipse → https://www.eclipse.org/downloads/packages/
-- Git → https://git-scm.com/downloads
+* Java 17
+* Maven 3.9+
+* Docker Desktop
+* Node.js 20+
+* Git
 
-Verificar:
+Verificar instalación:
 
 ```
 java -version
 mvn -v
-mysql --version
+docker -v
+node -v
 git --version
 ```
 
 ---
 
-# Configuración del Proyecto
+# Ejecución del Sistema
 
 ## 1 Clonar repositorio
 
@@ -154,58 +224,57 @@ cd TiendaGenerica-TransaccionesComerciales
 
 ---
 
-## 2 Crear Base de Datos
+## 2 Iniciar el sistema
+
+Ejecutar:
 
 ```
-CREATE DATABASE tienda_db;
+start_system.bat
 ```
+
+Este script realiza automáticamente:
+
+1. Levantar la base de datos con Docker
+2. Iniciar Eureka Server
+3. Iniciar API Gateway
+4. Iniciar todos los microservicios
+5. Iniciar el frontend React
+6. Abrir el navegador automáticamente
 
 ---
 
-## 3 Configurar conexión
+# Acceso al sistema
 
-Editar:
-
-```
-src/main/resources/application.properties
-```
+Frontend:
 
 ```
-spring.datasource.url=jdbc:mysql://localhost:3306/tienda_db
-spring.datasource.username=root
-spring.datasource.password=tu_password
-spring.jpa.hibernate.ddl-auto=update
+http://localhost:3039
 ```
 
----
-
-## 4 Ejecutar proyecto
+Eureka Dashboard:
 
 ```
-mvn spring-boot:run
+http://localhost:8761
 ```
 
-o
-
-```
-mvn clean install
-java -jar target/*.jar
-```
-
----
-
-# Acceso
+API Gateway:
 
 ```
 http://localhost:8080
 ```
 
-Usuario inicial:
-
-```
-admininicial
-admin123456
-```
-
 ---
 
+# Apagar el sistema
+
+Ejecutar:
+
+```
+stop_system.bat
+```
+
+Esto detendrá:
+
+* Base de datos Docker
+* Microservicios
+* Frontend
