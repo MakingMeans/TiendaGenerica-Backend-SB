@@ -23,4 +23,6 @@ public interface ProductoService {
     void uploadCsv(MultipartFile file);
 
     void incrementarStock(Long idProducto, Integer cantidad);
+
+    void updateStock(Long idProducto, Integer cantidad);
 }

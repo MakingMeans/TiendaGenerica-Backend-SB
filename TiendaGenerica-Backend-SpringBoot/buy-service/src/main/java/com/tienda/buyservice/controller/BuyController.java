@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/buys")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+@PreAuthorize("hasAnyRole('ADMIN','GERENTE','INVENTARIO')")
 public class BuyController {
 
     private final BuyService service;

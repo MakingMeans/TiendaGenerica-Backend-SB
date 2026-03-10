@@ -16,7 +16,7 @@
           "bearer": [
             {
               "key": "token",
-              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDc4Mzk1LCJleHAiOjE3NzMwODE5OTV9.ixeF7ptb8XWRgbAL9KQxNzCEx_SBOKI3B-sp9bCNCwg",
               "type": "string"
             }
           ]

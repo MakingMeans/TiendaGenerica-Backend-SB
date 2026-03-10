@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/suppliers")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN','GERENTE')")
+@PreAuthorize("hasAnyRole('ADMIN','GERENTE','INVENTARIO')")
 public class ProveedorController {
 
     private final ProveedorService service;
