@@ -1,0 +1,172 @@
+version: "3.9"
+
+services:
+
+# =========================
+# DATABASES
+# =========================
+
+  mysql-auth:
+    image: mysql:8
+    container_name: mysql_auth
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_aut_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/authenticationservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/authenticationservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_auth_data:/var/lib/mysql
+
+  mysql-suppliers:
+    image: mysql:8
+    container_name: mysql_suppliers
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_sup_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/supplierservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/supplierservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_suppliers_data:/var/lib/mysql
+
+  mysql-sales:
+    image: mysql:8
+    container_name: mysql_sales
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_sal_db
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/saleservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/saleservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_sales_data:/var/lib/mysql
+
+  mysql-catalog:
+    image: mysql:8
+    container_name: mysql_catalog
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_cat_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/catalogservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/catalogservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_catalog_data:/var/lib/mysql
+
+  mysql-clients:
+    image: mysql:8
+    container_name: mysql_clients
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_cli_db
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/clientservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/clientservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_clients_data:/var/lib/mysql
+
+  mysql-buy:
+    image: mysql:8
+    container_name: mysql_buy
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tienda_buy_db
+    ports:
+      - "3311:3306"
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/buyservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases/buyservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
+      - mysql_buy_data:/var/lib/mysql
+
+
+# =========================
+# MICROSERVICES
+# =========================
+
+  eureka-server:
+    build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
+    ports:
+      - "8761:8761"
+
+  authentication-service:
+    build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - mysql-auth
+
+  client-service:
+    build: ./TiendaGenerica-Backend-SpringBoot/client-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+      - mysql-clients
+
+  supplier-service:
+    build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+      - mysql-suppliers
+
+  catalog-service:
+    build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+      - mysql-catalog
+
+  buy-service:
+    build: ./TiendaGenerica-Backend-SpringBoot/buy-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+      - mysql-buy
+
+  sale-service:
+    build: ./TiendaGenerica-Backend-SpringBoot/sale-service
+    ports:
+      - "8086:8086"
+    depends_on:
+      - eureka-server
+      - mysql-sales
+
+  api-gateway:
+    build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+
+
+# =========================
+# FRONTEND
+# =========================
+
+  frontend:
+    build: ../TiendaGenerica-Frontend-React
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api-gateway
+
+
+volumes:
+
+  mysql_auth_data:
+  mysql_suppliers_data:
+  mysql_sales_data:
+  mysql_catalog_data:
+  mysql_clients_data:
+  mysql_buy_data:
