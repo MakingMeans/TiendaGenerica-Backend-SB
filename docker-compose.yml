@@ -1,3 +1,6 @@
+# =========================
+# COMPOSE FULL-STACK
+# =========================
 version: "3.9"
 
 services:
@@ -155,9 +158,9 @@ services:
 # =========================
 
   frontend:
-    build: ../TiendaGenerica-Frontend-React
+    build: ./TiendaGenerica-Frontend-React
     ports:
-      - "5173:5173"
+      - "3039:3039"
     depends_on:
       - api-gateway
 
