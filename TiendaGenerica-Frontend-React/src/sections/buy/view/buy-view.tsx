@@ -1,4 +1,4 @@
-import type { Supplier } from 'src/modules/suppliers/suppliers.types';
+import type { Buy } from 'src/modules/buy/buy.types';
 
 import { useState, useEffect, useCallback } from 'react';
 
@@ -11,67 +11,53 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
+import { getBuys } from 'src/modules/buy/buy.service';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { getSuppliers } from 'src/modules/suppliers/suppliers.service';
-import { EditSupplierDialog } from 'src/modules/suppliers/components/EditSupplierDialog';
-import { CreateSupplierDialog } from 'src/modules/suppliers/components/CreateSupplierDialog';
-import { DeleteSupplierDialog } from 'src/modules/suppliers/components/DeleteSupplierDialog';
-import { ReactivateSupplierDialog } from 'src/modules/suppliers/components/ReactivateSupplierDialog';
+import { CreateBuyDialog } from 'src/modules/buy/components/CreateBuyDialog';
+import { DeleteBuyDialog } from 'src/modules/buy/components/DeleteBuyDialog';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
+import { BuyTableRow } from '../buy-table-row';
+import { BuyTableHead } from '../buy-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { SupplierTableRow } from '../supplier-table-row';
-import { SupplierTableHead } from '../supplier-table-head';
-import { SupplierTableToolbar } from '../supplier-table-toolbar';
+import { BuyTableToolbar } from '../buy-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { SupplierProps } from '../supplier-table-row';
+import type { BuyRowProps } from '../buy-table-row';
 
 // ----------------------------------------------------------------------
 
-export function SupplierView() {
+export function BuyView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [buys, setBuys] = useState<Buy[]>([]);
 
   useEffect(() => {
-    loadSuppliers();
+    loadBuys();
   }, []);
 
-  const loadSuppliers = async () => {
-    const data = await getSuppliers();
-    setSuppliers(data);
+  const loadBuys = async () => {
+    const data = await getBuys();
+    setBuys(data);
   };
 
-  const dataFiltered: SupplierProps[] = applyFilter({
-    inputData: suppliers,
+  const dataFiltered: BuyRowProps[] = applyFilter({
+    inputData: buys,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
-  const [openReactivate, setOpenReactivate] = useState(false);
+  const [selectedBuy, setSelectedBuy] = useState<Buy | null>(null);
   const [openCreate, setOpenCreate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
-  const handleOpenEdit = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
-    setOpenEdit(true);
-  };
-
-  const handleOpenDelete = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
+  const handleOpenDelete = (buy: Buy) => {
+    setSelectedBuy(buy);
     setOpenDelete(true);
-  };
-
-  const handleOpenReactivate = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
-    setOpenReactivate(true);
   };
 
   const notFound = !dataFiltered.length && !!filterName;
@@ -83,10 +69,11 @@ export function SupplierView() {
           mb: 5,
           display: 'flex',
           alignItems: 'center',
+          gap: 2,
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Suppliers
+          Compras
         </Typography>
 
         <Button
@@ -95,12 +82,12 @@ export function SupplierView() {
           startIcon={<Iconify icon="mingcute:add-line" />}
           onClick={() => setOpenCreate(true)}
         >
-          New supplier
+          Nueva compra
         </Button>
       </Box>
 
       <Card>
-        <SupplierTableToolbar
+        <BuyTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,26 +99,24 @@ export function SupplierView() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <SupplierTableHead
+              <BuyTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={suppliers.length}
+                rowCount={buys.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    suppliers.map((supplier) => supplier.idProveedor.toString())
+                    buys.map((buy) => buy.idCompra.toString())
                   )
                 }
                 headLabel={[
-                  { id: 'nit', label: 'NIT' },
-                  { id: 'nombre', label: 'Nombre' },
-                  { id: 'direccion', label: 'Dirección' },
-                  { id: 'telefono', label: 'Teléfono' },
-                  { id: 'ciudad', label: 'Ciudad' },
-                  { id: 'email', label: 'Email' },
-                  { id: 'activo', label: 'Estado' },
+                  { id: 'numeroCompra', label: 'Número' },
+                  { id: 'idProveedor', label: 'Proveedor' },
+                  { id: 'fecha', label: 'Fecha' },
+                  { id: 'total', label: 'Total' },
+                  { id: 'estado', label: 'Estado' },
                   { id: '' },
                 ]}
               />
@@ -143,17 +128,16 @@ export function SupplierView() {
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <SupplierTableRow
-                      key={row.idProveedor}
+                    <BuyTableRow
+                      key={row.idCompra}
                       row={row}
-                      selected={table.selected.includes(row.idProveedor.toString())}
-                      onSelectRow={() => table.onSelectRow(row.idProveedor.toString())}
-                      onEdit={(supplier) => handleOpenEdit(supplier)}
-                      onDelete={(supplier) =>
-                        supplier.activo
-                          ? handleOpenDelete(supplier)
-                          : handleOpenReactivate(supplier)
+                      selected={table.selected.includes(
+                        row.idCompra.toString()
+                      )}
+                      onSelectRow={() =>
+                        table.onSelectRow(row.idCompra.toString())
                       }
+                      onDelete={(buy) => handleOpenDelete(buy)}
                     />
                   ))}
 
@@ -162,7 +146,7 @@ export function SupplierView() {
                   emptyRows={emptyRows(
                     table.page,
                     table.rowsPerPage,
-                    suppliers.length
+                    buys.length
                   )}
                 />
 
@@ -175,7 +159,7 @@ export function SupplierView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={suppliers.length}
+          count={buys.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
@@ -183,31 +167,17 @@ export function SupplierView() {
         />
       </Card>
 
-      <CreateSupplierDialog
+      <CreateBuyDialog
         open={openCreate}
         onClose={() => setOpenCreate(false)}
-        onSuccess={loadSuppliers}
+        onSuccess={loadBuys}
       />
 
-      <EditSupplierDialog
-        open={openEdit}
-        provider={selectedSupplier}
-        onClose={() => setOpenEdit(false)}
-        onSuccess={loadSuppliers}
-      />
-
-      <DeleteSupplierDialog
+      <DeleteBuyDialog
         open={openDelete}
-        supplier={selectedSupplier}
+        buy={selectedBuy}
         onClose={() => setOpenDelete(false)}
-        onSuccess={loadSuppliers}
-      />
-
-      <ReactivateSupplierDialog
-        open={openReactivate}
-        provider={selectedSupplier}
-        onClose={() => setOpenReactivate(false)}
-        onSuccess={loadSuppliers}
+        onSuccess={loadBuys}
       />
     </DashboardContent>
   );

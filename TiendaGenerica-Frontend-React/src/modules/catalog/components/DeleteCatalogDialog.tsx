@@ -5,35 +5,27 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 
-import { updateSupplier } from '../suppliers.service';
+import { deleteProduct } from '../catalog.service';
 
-import type { Supplier } from '../suppliers.types';
+import type { Product } from '../catalog.types';
 
 type Props = {
   open: boolean;
-  supplier: Supplier | null;
+  product: Product | null;
   onClose: () => void;
   onSuccess: () => void;
 };
 
-export function DeleteSupplierDialog({
+export function DeleteCatalogDialog({
   open,
-  supplier,
+  product,
   onClose,
   onSuccess,
 }: Props) {
   const handleDelete = async () => {
-    if (!supplier) return;
+    if (!product) return;
 
-    await updateSupplier(supplier.idProveedor, {
-      nit: supplier.nit,
-      nombre: supplier.nombre,
-      direccion: supplier.direccion,
-      telefono: supplier.telefono,
-      ciudad: supplier.ciudad,
-      email: supplier.email,
-      activo: false,
-    });
+    await deleteProduct(product.idProducto);
 
     onSuccess();
     onClose();
@@ -41,12 +33,12 @@ export function DeleteSupplierDialog({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Desactivar Proveedor</DialogTitle>
+      <DialogTitle>Desactivar Producto</DialogTitle>
 
       <DialogContent>
         <Typography>
-          ¿Deseas desactivar al proveedor{' '}
-          <strong>{supplier?.nombre}</strong>?
+          ¿Deseas desactivar el producto{' '}
+          <strong>{product?.nombre}</strong>?
         </Typography>
       </DialogContent>
 

@@ -49,7 +49,7 @@ export const createSupplier = async (
 export const updateSupplier = async (
   id: number,
   data: UpdateSupplierDTO
-): Promise<Supplier> => {
+): Promise<void> => {
   const response = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
     headers: getAuthHeaders(),
@@ -60,7 +60,7 @@ export const updateSupplier = async (
     throw new Error('Error actualizando proveedor');
   }
 
-  return response.json();
+
 };
 
 // 🗑 DELETE HARD
@@ -85,4 +85,17 @@ export const deactivateSupplier = async (id: number): Promise<void> => {
   if (!response.ok) {
     throw new Error('Error desactivando proveedor');
   }
+};
+
+export const getActiveProviders = async (): Promise<Supplier[]> => {
+  const response = await fetch(`${API_URL}/active-nits`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error obteniendo proveedores");
+  }
+
+  return response.json();
 };

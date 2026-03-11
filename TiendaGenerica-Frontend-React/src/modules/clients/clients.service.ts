@@ -66,6 +66,8 @@ export const deleteClient = async (id: number): Promise<void> => {
   if (!response.ok) {
     throw new Error("Error eliminando cliente");
   }
+
+  
 };
 
 export const deactivateClient = async (id: number): Promise<void> => {
@@ -78,3 +80,4 @@ export const deactivateClient = async (id: number): Promise<void> => {
     throw new Error("Error desactivando cliente");
   }
 };
+

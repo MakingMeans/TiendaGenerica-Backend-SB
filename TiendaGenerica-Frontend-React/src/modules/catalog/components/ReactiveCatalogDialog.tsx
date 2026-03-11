@@ -5,48 +5,39 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 
-import { updateSupplier } from '../suppliers.service';
+import { deleteProduct } from '../catalog.service';
 
-import type { Supplier } from '../suppliers.types';
+import type { Product } from '../catalog.types';
 
 type Props = {
   open: boolean;
-  provider: Supplier | null;
+  product: Product | null;
   onClose: () => void;
   onSuccess: () => void;
 };
 
-export function ReactivateSupplierDialog({
+export function ReactivateCatalogDialog({
   open,
-  provider,
+  product,
   onClose,
   onSuccess,
 }: Props) {
   const handleReactivate = async () => {
-    if (!provider) return;
+    if (!product) return;
 
-    await updateSupplier(provider.idProveedor, {
-      nit: provider.nit,
-      nombre: provider.nombre,
-      direccion: provider.direccion,
-      telefono: provider.telefono,
-      ciudad: provider.ciudad,
-      email: provider.email,
-      activo: true,
-    });
-
-    onSuccess();
-    onClose();
+    await deleteProduct(product.idProducto);
+    
+        onSuccess();
+        onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Reactivar Proveedor</DialogTitle>
+      <DialogTitle>Reactivar Producto</DialogTitle>
 
       <DialogContent>
         <Typography>
-          ¿Deseas reactivar al proveedor{' '}
-          <strong>{provider?.nombre}</strong>?
+          ¿Deseas reactivar el producto <strong>{product?.nombre}</strong>?
         </Typography>
       </DialogContent>
 

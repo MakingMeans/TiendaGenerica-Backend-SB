@@ -20,6 +20,8 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const ClientPage = lazy(() => import('src/pages/client'));
 export const SupplierPage = lazy(() => import('src/pages/supplier'));
+export const CatalogPage = lazy(() => import('src/pages/catalog'));
+export const BuyPage = lazy(() => import('src/pages/buy'));
 
 const renderFallback = () => (
   <Box
@@ -59,6 +61,8 @@ export const routesSection: RouteObject[] = [
       { path: 'products', element: <ProductsPage /> },
       { path: 'client', element: <ClientPage /> },
       { path: 'supplier', element: <SupplierPage /> },
+      { path: 'catalog', element: <CatalogPage /> },
+      { path: 'buy', element: <BuyPage /> },
     ],
   },
   {

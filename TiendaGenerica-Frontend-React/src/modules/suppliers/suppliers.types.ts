@@ -1,5 +1,5 @@
 export type Supplier = {
-  id: number;
+  idProveedor: number;
   nit: string;
   nombre: string;
   direccion: string;
@@ -9,5 +9,5 @@ export type Supplier = {
   activo: boolean;
 };
 
-export type CreateSupplierDTO = Omit<Supplier, 'id'>;
+export type CreateSupplierDTO = Omit<Supplier, 'idProveedor'>;
 export type UpdateSupplierDTO = Partial<CreateSupplierDTO>;

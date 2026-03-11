@@ -1,4 +1,4 @@
-import type { Supplier } from 'src/modules/suppliers/suppliers.types';
+import type { Product } from 'src/modules/catalog/catalog.types';
 
 import { useState, useEffect, useCallback } from 'react';
 
@@ -12,65 +12,67 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { getSuppliers } from 'src/modules/suppliers/suppliers.service';
-import { EditSupplierDialog } from 'src/modules/suppliers/components/EditSupplierDialog';
-import { CreateSupplierDialog } from 'src/modules/suppliers/components/CreateSupplierDialog';
-import { DeleteSupplierDialog } from 'src/modules/suppliers/components/DeleteSupplierDialog';
-import { ReactivateSupplierDialog } from 'src/modules/suppliers/components/ReactivateSupplierDialog';
+import { getProducts } from 'src/modules/catalog/catalog.service';
+import { UploadCsvDialog } from 'src/modules/catalog/components/UploadCsvDialog';
+import { EditCatalogDialog } from 'src/modules/catalog/components/EditCatalogDialog';
+import { CreateCatalogDialog } from 'src/modules/catalog/components/CreateCatalogDialog';
+import { DeleteCatalogDialog } from 'src/modules/catalog/components/DeleteCatalogDialog';
+import { ReactivateCatalogDialog } from 'src/modules/catalog/components/ReactiveCatalogDialog';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
 import { TableEmptyRows } from '../table-empty-rows';
-import { SupplierTableRow } from '../supplier-table-row';
-import { SupplierTableHead } from '../supplier-table-head';
-import { SupplierTableToolbar } from '../supplier-table-toolbar';
+import { CatalogTableRow } from '../catalog-table-row';
+import { CatalogTableHead } from '../catalog-table-head';
+import { CatalogTableToolbar } from '../catalog-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { SupplierProps } from '../supplier-table-row';
+import type { CatalogProps } from '../catalog-table-row';
 
 // ----------------------------------------------------------------------
 
-export function SupplierView() {
+export function CatalogView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
-  const [suppliers, setSuppliers] = useState<Supplier[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    loadSuppliers();
+    loadProducts();
   }, []);
 
-  const loadSuppliers = async () => {
-    const data = await getSuppliers();
-    setSuppliers(data);
+  const loadProducts = async () => {
+    const data = await getProducts();
+    setProducts(data);
   };
 
-  const dataFiltered: SupplierProps[] = applyFilter({
-    inputData: suppliers,
+  const dataFiltered: CatalogProps[] = applyFilter({
+    inputData: products,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
-  const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openReactivate, setOpenReactivate] = useState(false);
   const [openCreate, setOpenCreate] = useState(false);
+  const [openUpload, setOpenUpload] = useState(false);
 
-  const handleOpenEdit = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
+  const handleOpenEdit = (product: Product) => {
+    setSelectedProduct(product);
     setOpenEdit(true);
   };
 
-  const handleOpenDelete = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
+  const handleOpenDelete = (product: Product) => {
+    setSelectedProduct(product);
     setOpenDelete(true);
   };
 
-  const handleOpenReactivate = (supplier: Supplier) => {
-    setSelectedSupplier(supplier);
+  const handleOpenReactivate = (product: Product) => {
+    setSelectedProduct(product);
     setOpenReactivate(true);
   };
 
@@ -83,10 +85,11 @@ export function SupplierView() {
           mb: 5,
           display: 'flex',
           alignItems: 'center',
+          gap: 2,
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Suppliers
+          Catálogo
         </Typography>
 
         <Button
@@ -95,12 +98,19 @@ export function SupplierView() {
           startIcon={<Iconify icon="mingcute:add-line" />}
           onClick={() => setOpenCreate(true)}
         >
-          New supplier
+          Nuevo producto
         </Button>
+        <Button
+            variant="outlined"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+            onClick={() => setOpenUpload(true)}
+          >
+  Importar CSV
+</Button>
       </Box>
 
       <Card>
-        <SupplierTableToolbar
+        <CatalogTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,25 +122,26 @@ export function SupplierView() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <SupplierTableHead
+              <CatalogTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={suppliers.length}
+                rowCount={products.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    suppliers.map((supplier) => supplier.idProveedor.toString())
+                    products.map((product) =>
+                      product.idProducto.toString()
+                    )
                   )
                 }
                 headLabel={[
-                  { id: 'nit', label: 'NIT' },
+                  { id: 'codigo', label: 'Código' },
                   { id: 'nombre', label: 'Nombre' },
-                  { id: 'direccion', label: 'Dirección' },
-                  { id: 'telefono', label: 'Teléfono' },
-                  { id: 'ciudad', label: 'Ciudad' },
-                  { id: 'email', label: 'Email' },
+                  { id: 'precioVenta', label: 'Precio' },
+                  { id: 'iva', label: 'IVA' },
+                  { id: 'stockActual', label: 'Stock' },
                   { id: 'activo', label: 'Estado' },
                   { id: '' },
                 ]}
@@ -143,16 +154,20 @@ export function SupplierView() {
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <SupplierTableRow
-                      key={row.idProveedor}
+                    <CatalogTableRow
+                      key={row.idProducto}
                       row={row}
-                      selected={table.selected.includes(row.idProveedor.toString())}
-                      onSelectRow={() => table.onSelectRow(row.idProveedor.toString())}
-                      onEdit={(supplier) => handleOpenEdit(supplier)}
-                      onDelete={(supplier) =>
-                        supplier.activo
-                          ? handleOpenDelete(supplier)
-                          : handleOpenReactivate(supplier)
+                      selected={table.selected.includes(
+                        row.idProducto.toString()
+                      )}
+                      onSelectRow={() =>
+                        table.onSelectRow(row.idProducto.toString())
+                      }
+                      onEdit={(product) => handleOpenEdit(product)}
+                      onDelete={(product) =>
+                        product.activo
+                          ? handleOpenDelete(product)
+                          : handleOpenReactivate(product)
                       }
                     />
                   ))}
@@ -162,7 +177,7 @@ export function SupplierView() {
                   emptyRows={emptyRows(
                     table.page,
                     table.rowsPerPage,
-                    suppliers.length
+                    products.length
                   )}
                 />
 
@@ -175,7 +190,7 @@ export function SupplierView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={suppliers.length}
+          count={products.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
@@ -183,32 +198,38 @@ export function SupplierView() {
         />
       </Card>
 
-      <CreateSupplierDialog
+      <CreateCatalogDialog
         open={openCreate}
         onClose={() => setOpenCreate(false)}
-        onSuccess={loadSuppliers}
+        onSuccess={loadProducts}
       />
 
-      <EditSupplierDialog
+      <EditCatalogDialog
         open={openEdit}
-        provider={selectedSupplier}
+        product={selectedProduct}
         onClose={() => setOpenEdit(false)}
-        onSuccess={loadSuppliers}
+        onSuccess={loadProducts}
       />
 
-      <DeleteSupplierDialog
+      <DeleteCatalogDialog
         open={openDelete}
-        supplier={selectedSupplier}
+        product={selectedProduct}
         onClose={() => setOpenDelete(false)}
-        onSuccess={loadSuppliers}
+        onSuccess={loadProducts}
       />
 
-      <ReactivateSupplierDialog
+      <ReactivateCatalogDialog
         open={openReactivate}
-        provider={selectedSupplier}
+        product={selectedProduct}
         onClose={() => setOpenReactivate(false)}
-        onSuccess={loadSuppliers}
+        onSuccess={loadProducts}
       />
+
+      <UploadCsvDialog
+  open={openUpload}
+  onClose={() => setOpenUpload(false)}
+  onSuccess={loadProducts}
+/>
     </DashboardContent>
   );
 }

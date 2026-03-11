@@ -50,7 +50,7 @@ export function EditSupplierDialog({
     if (!provider) return;
 
     try {
-      await updateSupplier(provider.id, {
+      await updateSupplier(provider.idProveedor, {
         nit,
         nombre,
         direccion,
