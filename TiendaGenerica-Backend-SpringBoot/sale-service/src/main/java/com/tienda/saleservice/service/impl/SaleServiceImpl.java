@@ -50,7 +50,7 @@ public class SaleServiceImpl implements SaleService {
 
         for (SaleDetailDTO detailDTO : saleDTO.getDetalles()) {
 
-            ProductDTO product = catalogClient.getProductById(detailDTO.getIdProducto());
+            ProductDTO product = catalogClient.getProductByCodigo(detailDTO.getCodigoProducto());
 
             if (product == null) {
                 throw new RuntimeException("Producto no existe");
@@ -69,7 +69,7 @@ public class SaleServiceImpl implements SaleService {
             totalBruto = totalBruto.add(total);
 
             SaleDetail detail = new SaleDetail();
-            detail.setIdProducto(detailDTO.getIdProducto());
+            detail.setCodigoProducto(detailDTO.getCodigoProducto());
             detail.setCantidad(detailDTO.getCantidad());
             detail.setPrecioUnitario(precioUnitario);
             detail.setTotal(total);
@@ -107,7 +107,7 @@ public class SaleServiceImpl implements SaleService {
 
 
             catalogClient.updateStock(
-                    detail.getIdProducto(),
+                    detail.getCodigoProducto(),
                     Integer.valueOf("-"+detail.getCantidad())
             );
         }
@@ -179,7 +179,7 @@ public class SaleServiceImpl implements SaleService {
 
                 SaleDetailDTO detailDTO = new SaleDetailDTO();
 
-                detailDTO.setIdProducto(d.getIdProducto());
+                detailDTO.setCodigoProducto(d.getCodigoProducto());
                 detailDTO.setCantidad(d.getCantidad());
                 detailDTO.setPrecioUnitario(d.getPrecioUnitario());
                 detailDTO.setTotal(d.getTotal());
@@ -235,7 +235,7 @@ public class SaleServiceImpl implements SaleService {
 
         List<SaleDetailDTO> detallesDTO = detalles.stream().map(det -> {
             SaleDetailDTO d = new SaleDetailDTO();
-            d.setIdProducto(det.getIdProducto());
+            d.setCodigoProducto(det.getCodigoProducto());
             d.setCantidad(det.getCantidad());
             d.setPrecioUnitario(det.getPrecioUnitario());
             d.setTotal(det.getTotal());
@@ -295,7 +295,7 @@ public class SaleServiceImpl implements SaleService {
 
                 SaleDetailDTO detailDTO = new SaleDetailDTO();
 
-                detailDTO.setIdProducto(detail.getIdProducto());
+                detailDTO.setCodigoProducto(detail.getCodigoProducto());
                 detailDTO.setCantidad(detail.getCantidad());
                 detailDTO.setPrecioUnitario(detail.getPrecioUnitario());
                 detailDTO.setTotal(detail.getTotal());

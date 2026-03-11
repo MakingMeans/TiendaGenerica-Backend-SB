@@ -1,6 +1,7 @@
 package com.tienda.clientservice.controller;
 
 import com.tienda.clientservice.dto.ClientDTO;
+import com.tienda.clientservice.dto.ClientIdCedulaDTO;
 import com.tienda.clientservice.service.ClientService;
 
 import lombok.RequiredArgsConstructor;
@@ -46,5 +47,10 @@ public class ClientController {
     @DeleteMapping("/{id}/act")
     public void deactivate(@PathVariable Long id) {
         service.deactivate(id);
+    }
+
+    @GetMapping("/active-clients")
+    public List<ClientIdCedulaDTO> getActiveClients() {
+        return service.findActiveClients();
     }
 }

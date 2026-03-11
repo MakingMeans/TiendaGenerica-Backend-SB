@@ -13,7 +13,7 @@ CREATE TABLE ventas (
 CREATE TABLE detalle_ventas (
     id_detalle_venta BIGINT AUTO_INCREMENT PRIMARY KEY,
     id_venta BIGINT NOT NULL,
-    id_producto BIGINT NOT NULL,
+    codigo_producto VARCHAR(15) NOT NULL,
     cantidad INT NOT NULL,
     precio_unitario DECIMAL(12,2) NOT NULL,
     total DECIMAL(14,2),

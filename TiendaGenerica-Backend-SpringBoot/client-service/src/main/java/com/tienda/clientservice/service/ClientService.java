@@ -1,6 +1,8 @@
 package com.tienda.clientservice.service;
 
 import com.tienda.clientservice.dto.ClientDTO;
+import com.tienda.clientservice.dto.ClientIdCedulaDTO;
+
 import java.util.List;
 
 public interface ClientService {
@@ -16,4 +18,7 @@ public interface ClientService {
     void delete(Long id);
 
     void deactivate(Long id);
+
+    List<ClientIdCedulaDTO> findActiveClients();
+
 }

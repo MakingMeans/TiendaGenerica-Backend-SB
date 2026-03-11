@@ -26,5 +26,5 @@ public interface ProductoService {
 
     void incrementarStock(String codigoProducto, Integer cantidad);
 
-    void updateStock(Long idProducto, Integer cantidad);
+    void updateStock(String codigoProducto, Integer cantidad);
 }

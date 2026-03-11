@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Setter
 public class SaleDetailDTO {
 
-    private Long idProducto;
+    private String codigoProducto;
 
     private Integer cantidad;
 

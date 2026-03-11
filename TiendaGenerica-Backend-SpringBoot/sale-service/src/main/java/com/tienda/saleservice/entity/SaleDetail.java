@@ -20,8 +20,8 @@ public class SaleDetail {
     @Column(name = "id_venta")
     private Long idVenta;
 
-    @Column(name = "id_producto")
-    private Long idProducto;
+    @Column(name = "codigo_producto", nullable = false)
+    private String codigoProducto;
 
     @Column(name = "cantidad")
     private Integer cantidad;

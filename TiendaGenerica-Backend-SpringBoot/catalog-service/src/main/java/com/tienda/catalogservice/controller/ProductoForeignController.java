@@ -33,11 +33,11 @@ public class ProductoForeignController {
         return service.findByCodigo(codigo);
     }
 
-    @PatchMapping("/{id}/stock")
+    @PatchMapping("/codigo/{codigo}/stock")
     public void updateStock(
-            @PathVariable Long id,
+            @PathVariable String codigo,
             @RequestParam Integer cantidad) {
 
-        service.updateStock(id, cantidad);
+        service.updateStock(codigo, cantidad);
     }
 }

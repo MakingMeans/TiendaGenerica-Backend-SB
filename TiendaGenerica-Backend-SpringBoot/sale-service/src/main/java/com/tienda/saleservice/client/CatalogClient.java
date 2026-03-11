@@ -15,10 +15,13 @@ public interface CatalogClient {
     @GetMapping("/foreigncatalog/{id}")
     ProductDTO getProductById(@PathVariable("id") Long id);
 
-    @PutMapping("/foreigncatalog/{id}/stock")
+    @PutMapping("/foreigncatalog/codigo/{codigo}/stock")
     void updateStock(
-            @PathVariable("id") Long id,
+            @PathVariable String codigo,
             @RequestParam("cantidad") Integer cantidad
     );
+
+    @GetMapping("/foreigncatalog/codigo/{codigo}")
+    ProductDTO getProductByCodigo(@PathVariable String codigo);
 
 }

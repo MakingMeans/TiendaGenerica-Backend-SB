@@ -1,6 +1,7 @@
 package com.tienda.clientservice.service.impl;
 
 import com.tienda.clientservice.dto.ClientDTO;
+import com.tienda.clientservice.dto.ClientIdCedulaDTO;
 import com.tienda.clientservice.entity.Client;
 import com.tienda.clientservice.exception.ResourceNotFoundException;
 import com.tienda.clientservice.repository.ClientRepository;
@@ -95,6 +96,14 @@ public class ClientServiceImpl implements ClientService{
             client.setActivo(true);
         }
         repository.save(client);
+    }
+
+    @Override
+    public List<ClientIdCedulaDTO> findActiveClients() {
+        return repository.findByActivoTrue()
+                .stream()
+                .map(p -> new ClientIdCedulaDTO(p.getIdCliente(), p.getCedula()))
+                .toList();
     }
 
     private ClientDTO convertToDTO(Client client) {

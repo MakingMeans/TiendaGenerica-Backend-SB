@@ -124,9 +124,9 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     @Transactional
-    public void updateStock(Long idProducto, Integer cantidad) {
+    public void updateStock(String codigoProducto, Integer cantidad) {
 
-        Producto producto = productoRepository.findById(idProducto)
+        Producto producto = productoRepository.findByCodigo(codigoProducto)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
         if(producto.getStockActual() < cantidad){
