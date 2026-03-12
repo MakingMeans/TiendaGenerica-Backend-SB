@@ -1,0 +1,297 @@
+{
+  "info": {
+    "_postman_id": "473df28f-a033-49f0-a347-5809d52d045a",
+    "name": "CatalogEndpoints",
+    "description": "### Welcome to Postman! This is your first collection.\n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests  \n• Test your API in real-world scenarios  \n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50182838",
+    "_collection_link": "https://go.postman.co/collection/50182838-473df28f-a033-49f0-a347-5809d52d045a?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "GetAllProducts",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDc4Mzk1LCJleHAiOjE3NzMwODE5OTV9.ixeF7ptb8XWRgbAL9KQxNzCEx_SBOKI3B-sp9bCNCwg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "CreateProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Arroz\",\r\n  \"descripcion\": \"Arroz premium\",\r\n  \"precioVenta\": 15000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 100,\r\n  \"stockMinimo\": 10,\r\n  \"stockMaximo\": 500\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/catalog",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"nombre\": \"Arroz EDIT\",\r\n  \"descripcion\": \"Arroz premium EDIT\",\r\n  \"precioVenta\": 15000,\r\n  \"iva\": 19,\r\n  \"stockActual\": 100,\r\n  \"stockMinimo\": 10,\r\n  \"stockMaximo\": 500\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/catalog/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "DeactivateProduct",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/catalog/1/act",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "1",
+            "act"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "UploadCSV",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbiIsInJvbGVzIjpbIlJPTEVfQURNSU4iXSwiaWF0IjoxNzczMDI1NDI5LCJleHAiOjE3NzMwMjkwMjl9.IAOVPCFlo5kpO7WNP97guHts8g9OggUG_yKevgRCv2M",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "uuid": "bede673e-79b2-4262-a083-0ae631c6362b",
+              "src": "/C:/Users/david/Documents/UNBOSQUE/Semestre7/TiendaGenerica-TransaccionesComerciales/TiendaGenerica-Backend-SpringBoot/postman/catalogCSVinsert.csv"
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:8080/catalog/upload",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "catalog",
+            "upload"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetForeignProduct",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/foreigncatalog/2",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "foreigncatalog",
+            "2"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "IncrementStock",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/foreigncatalog/2/stock?cantidad=20",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "foreigncatalog",
+            "2",
+            "stock"
+          ],
+          "query": [
+            {
+              "key": "cantidad",
+              "value": "20"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
