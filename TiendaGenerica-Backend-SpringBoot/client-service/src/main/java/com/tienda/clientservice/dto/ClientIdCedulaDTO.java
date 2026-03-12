@@ -9,5 +9,7 @@ public class ClientIdCedulaDTO {
 
     private Long idCliente;
     private String cedula;
+    private String nombre;
+    private String apellido;
 
 }

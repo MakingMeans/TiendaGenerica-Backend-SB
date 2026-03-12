@@ -102,7 +102,7 @@ public class ClientServiceImpl implements ClientService{
     public List<ClientIdCedulaDTO> findActiveClients() {
         return repository.findByActivoTrue()
                 .stream()
-                .map(p -> new ClientIdCedulaDTO(p.getIdCliente(), p.getCedula()))
+                .map(p -> new ClientIdCedulaDTO(p.getIdCliente(), p.getCedula(), p.getNombre(), p.getApellido()))
                 .toList();
     }
 
