@@ -1,6 +1,6 @@
-import type { User } from 'src/modules/users/users.types';
+import type { Buy } from 'src/modules/buy/buy.types';
 
-import { useState , useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -11,69 +11,54 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
+import { getBuys } from 'src/modules/buy/buy.service';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { getUsers } from 'src/modules/users/users.service';
-import { EditUserDialog } from 'src/modules/users/components/EditUserDialog';
-import { CreateUserDialog } from 'src/modules/users/components/CreateUserDialog';
-import { DeleteUserDialog } from 'src/modules/users/components/DeleteUserDialog';
-import { ReactivateUserDialog } from 'src/modules/users/components/ReactivateUserDialog';
+import { CreateBuyDialog } from 'src/modules/buy/components/CreateBuyDialog';
+import { DeleteBuyDialog } from 'src/modules/buy/components/DeleteBuyDialog';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { BuyTableRow } from '../buy-table-row';
+import { BuyTableHead } from '../buy-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { BuyTableToolbar } from '../buy-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { UserProps } from '../user-table-row';
+import type { BuyRowProps } from '../buy-table-row';
 
 // ----------------------------------------------------------------------
 
-export function UserView() {
+export function BuyView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
-  const [users, setUsers] = useState<User[]>([]);
-  useEffect(() => {
-  loadUsers();
-}, []);
+  const [buys, setBuys] = useState<Buy[]>([]);
 
-const loadUsers = async () => {
-  const data = await getUsers();
-  setUsers(data);
-};
-  const dataFiltered: UserProps[] = applyFilter({
-    inputData: users,
+  useEffect(() => {
+    loadBuys();
+  }, []);
+
+  const loadBuys = async () => {
+    const data = await getBuys();
+    setBuys(data);
+  };
+
+  const dataFiltered: BuyRowProps[] = applyFilter({
+    inputData: buys,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
-  
+  const [selectedBuy, setSelectedBuy] = useState<Buy | null>(null);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
-const [selectedUser, setSelectedUser] = useState<User | null>(null);
-const [openEdit, setOpenEdit] = useState(false);
-const [openDelete, setOpenDelete] = useState(false);
-const [openReactivate, setOpenReactivate] = useState(false);
-const [openCreate, setOpenCreate] = useState(false);
-
-
-const handleOpenEdit = (user: User) => {
-  setSelectedUser(user);
-  setOpenEdit(true);
-};
-
-const handleOpenDelete = (user: User) => {
-  setSelectedUser(user);
-  setOpenDelete(true);
-};
-
-const handleOpenReactivate = (user: User) => {
-  setSelectedUser(user);
-  setOpenReactivate(true);
-};
+  const handleOpenDelete = (buy: Buy) => {
+    setSelectedBuy(buy);
+    setOpenDelete(true);
+  };
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -84,23 +69,25 @@ const handleOpenReactivate = (user: User) => {
           mb: 5,
           display: 'flex',
           alignItems: 'center',
+          gap: 2,
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Users
+          Compras
         </Typography>
+
         <Button
-  variant="contained"
-  color="inherit"
-  startIcon={<Iconify icon="mingcute:add-line" />}
-  onClick={() => setOpenCreate(true)}
->
-  New user
-</Button>
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="mingcute:add-line" />}
+          onClick={() => setOpenCreate(true)}
+        >
+          Nueva compra
+        </Button>
       </Box>
 
       <Card>
-        <UserTableToolbar
+        <BuyTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,28 +99,28 @@ const handleOpenReactivate = (user: User) => {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <BuyTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={users.length}
+                rowCount={buys.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    users.map((user) => user.id.toString())
+                    buys.map((buy) => buy.idCompra.toString())
                   )
                 }
                 headLabel={[
-  { id: 'cedula', label: 'Cédula' },
-  { id: 'nombre', label: 'Nombre' },
-  { id: 'apellido', label: 'Apellido' },
-  { id: 'correo', label: 'Correo' },
-  { id: 'username', label: 'Username' },
-  { id: 'activo', label: 'Estado' },
-  { id: '' },
-]}
+                  { id: 'numeroCompra', label: 'Número' },
+                  { id: 'idProveedor', label: 'Proveedor' },
+                  { id: 'fecha', label: 'Fecha' },
+                  { id: 'total', label: 'Total' },
+                  { id: 'estado', label: 'Estado' },
+                  { id: '' },
+                ]}
               />
+
               <TableBody>
                 {dataFiltered
                   .slice(
@@ -141,23 +128,26 @@ const handleOpenReactivate = (user: User) => {
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <UserTableRow
-  key={row.id}
-  row={row}
-  selected={table.selected.includes(row.id.toString())}
-  onSelectRow={() => table.onSelectRow(row.id.toString())}
-  onEdit={(user) => handleOpenEdit(user)}
-  onDelete={(user) =>
-  user.activo
-    ? handleOpenDelete(user)
-    : handleOpenReactivate(user)
-}
-/>
+                    <BuyTableRow
+                      key={row.idCompra}
+                      row={row}
+                      selected={table.selected.includes(
+                        row.idCompra.toString()
+                      )}
+                      onSelectRow={() =>
+                        table.onSelectRow(row.idCompra.toString())
+                      }
+                      onDelete={(buy) => handleOpenDelete(buy)}
+                    />
                   ))}
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, users.length)}
+                  emptyRows={emptyRows(
+                    table.page,
+                    table.rowsPerPage,
+                    buys.length
+                  )}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -169,43 +159,29 @@ const handleOpenReactivate = (user: User) => {
         <TablePagination
           component="div"
           page={table.page}
-          count={users.length}
+          count={buys.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>
-      <CreateUserDialog
-  open={openCreate}
-  onClose={() => setOpenCreate(false)}
-  onSuccess={loadUsers}
-/>
-<EditUserDialog
-  open={openEdit}
-  user={selectedUser}
-  onClose={() => setOpenEdit(false)}
-  onSuccess={loadUsers}
-/>
 
-<DeleteUserDialog
-  open={openDelete}
-  user={selectedUser}
-  onClose={() => setOpenDelete(false)}
-  onSuccess={loadUsers}
-/>
+      <CreateBuyDialog
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSuccess={loadBuys}
+      />
 
-<ReactivateUserDialog
-  open={openReactivate}
-  user={selectedUser}
-  onClose={() => setOpenReactivate(false)}
-  onSuccess={loadUsers}
-/>
+      <DeleteBuyDialog
+        open={openDelete}
+        buy={selectedBuy}
+        onClose={() => setOpenDelete(false)}
+        onSuccess={loadBuys}
+      />
     </DashboardContent>
   );
 }
-
-// ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);

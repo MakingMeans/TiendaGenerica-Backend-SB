@@ -1,16 +1,15 @@
-import { _posts } from 'src/_mock';
 import { CONFIG } from 'src/config-global';
 
-import { BlogView } from 'src/sections/blog/view';
+import { CatalogView } from 'src/sections/catalog/view';
 
 // ----------------------------------------------------------------------
 
 export default function Page() {
   return (
     <>
-      <title>{`Blog - ${CONFIG.appName}`}</title>
+      <title>{`Catalog - ${CONFIG.appName}`}</title>
 
-      <BlogView posts={_posts} />
+      <CatalogView />
     </>
   );
 }

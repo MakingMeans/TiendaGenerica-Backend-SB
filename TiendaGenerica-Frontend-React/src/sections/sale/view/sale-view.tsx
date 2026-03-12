@@ -1,6 +1,6 @@
-import type { User } from 'src/modules/users/users.types';
+import type { Sale } from 'src/modules/sales/sales.types';
 
-import { useState , useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
@@ -12,68 +12,53 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { getUsers } from 'src/modules/users/users.service';
-import { EditUserDialog } from 'src/modules/users/components/EditUserDialog';
-import { CreateUserDialog } from 'src/modules/users/components/CreateUserDialog';
-import { DeleteUserDialog } from 'src/modules/users/components/DeleteUserDialog';
-import { ReactivateUserDialog } from 'src/modules/users/components/ReactivateUserDialog';
+import { getSales } from 'src/modules/sales/sales.service';
+import { CreateSaleDialog } from 'src/modules/sales/components/CreateSalesDialog';
+import { DeleteSaleDialog } from 'src/modules/sales/components/DeleteSalesDialog';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { SaleTableRow } from '../sale-table-row';
+import { SaleTableHead } from '../sale-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { SaleTableToolbar } from '../sale-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
-import type { UserProps } from '../user-table-row';
+import type { SaleRowProps } from '../sale-table-row';
 
 // ----------------------------------------------------------------------
 
-export function UserView() {
+export function SalesView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
-  const [users, setUsers] = useState<User[]>([]);
-  useEffect(() => {
-  loadUsers();
-}, []);
+  const [sales, setSales] = useState<Sale[]>([]);
 
-const loadUsers = async () => {
-  const data = await getUsers();
-  setUsers(data);
-};
-  const dataFiltered: UserProps[] = applyFilter({
-    inputData: users,
+  useEffect(() => {
+    loadSales();
+  }, []);
+
+  const loadSales = async () => {
+    const data = await getSales();
+    setSales(data);
+  };
+
+  const dataFiltered: SaleRowProps[] = applyFilter({
+    inputData: sales,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
 
-  
+  const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
-const [selectedUser, setSelectedUser] = useState<User | null>(null);
-const [openEdit, setOpenEdit] = useState(false);
-const [openDelete, setOpenDelete] = useState(false);
-const [openReactivate, setOpenReactivate] = useState(false);
-const [openCreate, setOpenCreate] = useState(false);
-
-
-const handleOpenEdit = (user: User) => {
-  setSelectedUser(user);
-  setOpenEdit(true);
-};
-
-const handleOpenDelete = (user: User) => {
-  setSelectedUser(user);
-  setOpenDelete(true);
-};
-
-const handleOpenReactivate = (user: User) => {
-  setSelectedUser(user);
-  setOpenReactivate(true);
-};
+  const handleOpenDelete = (sale: Sale) => {
+    setSelectedSale(sale);
+    setOpenDelete(true);
+  };
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -84,23 +69,25 @@ const handleOpenReactivate = (user: User) => {
           mb: 5,
           display: 'flex',
           alignItems: 'center',
+          gap: 2,
         }}
       >
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          Users
+          Ventas
         </Typography>
+
         <Button
-  variant="contained"
-  color="inherit"
-  startIcon={<Iconify icon="mingcute:add-line" />}
-  onClick={() => setOpenCreate(true)}
->
-  New user
-</Button>
+          variant="contained"
+          color="inherit"
+          startIcon={<Iconify icon="mingcute:add-line" />}
+          onClick={() => setOpenCreate(true)}
+        >
+          Nueva venta
+        </Button>
       </Box>
 
       <Card>
-        <UserTableToolbar
+        <SaleTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,28 +99,28 @@ const handleOpenReactivate = (user: User) => {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <SaleTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={users.length}
+                rowCount={sales.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    users.map((user) => user.id.toString())
+                    sales.map((sale) => sale.idVenta.toString())
                   )
                 }
                 headLabel={[
-  { id: 'cedula', label: 'Cédula' },
-  { id: 'nombre', label: 'Nombre' },
-  { id: 'apellido', label: 'Apellido' },
-  { id: 'correo', label: 'Correo' },
-  { id: 'username', label: 'Username' },
-  { id: 'activo', label: 'Estado' },
-  { id: '' },
-]}
+                  { id: 'numeroVenta', label: 'Número' },
+                  { id: 'idCliente', label: 'Cliente' },
+                  { id: 'fecha', label: 'Fecha' },
+                  { id: 'totalFinal', label: 'Total (COP)' },
+                  { id: 'estado', label: 'Estado' },
+                  { id: '' },
+                ]}
               />
+
               <TableBody>
                 {dataFiltered
                   .slice(
@@ -141,23 +128,26 @@ const handleOpenReactivate = (user: User) => {
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
                   .map((row) => (
-                    <UserTableRow
-  key={row.id}
-  row={row}
-  selected={table.selected.includes(row.id.toString())}
-  onSelectRow={() => table.onSelectRow(row.id.toString())}
-  onEdit={(user) => handleOpenEdit(user)}
-  onDelete={(user) =>
-  user.activo
-    ? handleOpenDelete(user)
-    : handleOpenReactivate(user)
-}
-/>
+                    <SaleTableRow
+                      key={row.idVenta}
+                      row={row}
+                      selected={table.selected.includes(
+                        row.idVenta.toString()
+                      )}
+                      onSelectRow={() =>
+                        table.onSelectRow(row.idVenta.toString())
+                      }
+                      onDelete={(sale) => handleOpenDelete(sale)}
+                    />
                   ))}
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, users.length)}
+                  emptyRows={emptyRows(
+                    table.page,
+                    table.rowsPerPage,
+                    sales.length
+                  )}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -169,43 +159,29 @@ const handleOpenReactivate = (user: User) => {
         <TablePagination
           component="div"
           page={table.page}
-          count={users.length}
+          count={sales.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
           onRowsPerPageChange={table.onChangeRowsPerPage}
         />
       </Card>
-      <CreateUserDialog
-  open={openCreate}
-  onClose={() => setOpenCreate(false)}
-  onSuccess={loadUsers}
-/>
-<EditUserDialog
-  open={openEdit}
-  user={selectedUser}
-  onClose={() => setOpenEdit(false)}
-  onSuccess={loadUsers}
-/>
 
-<DeleteUserDialog
-  open={openDelete}
-  user={selectedUser}
-  onClose={() => setOpenDelete(false)}
-  onSuccess={loadUsers}
-/>
+      <CreateSaleDialog
+        open={openCreate}
+        onClose={() => setOpenCreate(false)}
+        onSuccess={loadSales}
+      />
 
-<ReactivateUserDialog
-  open={openReactivate}
-  user={selectedUser}
-  onClose={() => setOpenReactivate(false)}
-  onSuccess={loadUsers}
-/>
+      <DeleteSaleDialog
+        open={openDelete}
+        sale={selectedSale}
+        onClose={() => setOpenDelete(false)}
+        onSuccess={loadSales}
+      />
     </DashboardContent>
   );
 }
-
-// ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);

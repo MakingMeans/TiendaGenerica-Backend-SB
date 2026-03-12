@@ -52,7 +52,7 @@ export function SignInView() {
       <TextField
         fullWidth
         name="email"
-        label="Email address"
+        label="Email - Username"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         sx={{ mb: 3 }}
