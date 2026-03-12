@@ -81,3 +81,16 @@ export const deactivateClient = async (id: number): Promise<void> => {
   }
 };
 
+export const getActiveClients = async (): Promise<Client[]> => {
+  const response = await fetch(`${API_URL}/active-clients`, {
+    method: "GET",
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error("Error obteniendo clientes activos");
+  }
+
+  return response.json();
+};
+
