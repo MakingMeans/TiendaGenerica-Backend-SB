@@ -13,7 +13,7 @@
 	<artifactId>client-service</artifactId>
 	<name>client-service</name>
 	<description>Client Service</description>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<!-- Spring Boot Web -->

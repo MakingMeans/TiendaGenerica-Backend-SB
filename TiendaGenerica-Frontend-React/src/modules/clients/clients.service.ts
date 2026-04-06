@@ -1,96 +1,82 @@
-import type { Client, CreateClientDTO } from "./clients.types";
+import { api } from 'src/services/api';
 
-const API_URL = "http://localhost:8080/clients";
+import type { Client, CreateClientDTO } from './clients.types';
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+const getErrorMessage = (error: unknown, fallback: string) => {
+  const data = (error as any)?.response?.data;
+  return data?.message || data?.error || (error as any)?.message || fallback;
 };
 
 export const getClients = async (): Promise<Client[]> => {
-  const response = await fetch(API_URL, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error obteniendo clientes");
+  try {
+    const response = await api.get('/clients');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching clients:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching clients')); 
   }
+};
 
-  return response.json();
+export const getClientById = async (id: number): Promise<Client> => {
+  try {
+    const response = await api.get(`/clients/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching client by id:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching client')); 
+  }
 };
 
 export const createClient = async (
   data: CreateClientDTO
 ): Promise<Client> => {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error creando cliente");
+  try {
+    const response = await api.post('/clients', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating client:', error);
+    throw new Error(getErrorMessage(error, 'Error creating client'));
   }
-
-  return response.json();
 };
 
 export const updateClient = async (
   id: number,
   data: Partial<Client>
 ): Promise<Client> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error actualizando cliente");
+  try {
+    const response = await api.put(`/clients/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating client:', error);
+    throw new Error(getErrorMessage(error, 'Error updating client'));
   }
-
-  return response.json();
 };
 
 export const deleteClient = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error eliminando cliente");
+  try {
+    await api.delete(`/clients/${id}`);
+  } catch (error) {
+    console.error('Error deleting client:', error);
+    throw new Error(getErrorMessage(error, 'Error deleting client'));
   }
-
-  
 };
 
 export const deactivateClient = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}/act`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error desactivando cliente");
+  try {
+    await api.delete(`/clients/${id}/act`);
+  } catch (error) {
+    console.error('Error deactivating client:', error);
+    throw new Error(getErrorMessage(error, 'Error deactivating client'));
   }
 };
 
 export const getActiveClients = async (): Promise<Client[]> => {
-  const response = await fetch(`${API_URL}/active-clients`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error obteniendo clientes activos");
+  try {
+    const response = await api.get('/clients/active-clients');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching active clients:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching active clients'));
   }
-
-  return response.json();
 };
 

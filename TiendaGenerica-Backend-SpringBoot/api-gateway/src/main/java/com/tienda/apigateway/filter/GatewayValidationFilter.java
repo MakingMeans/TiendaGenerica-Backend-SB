@@ -32,6 +32,13 @@ public class GatewayValidationFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
+        // bypass validation for health endpoint
+        if (path.equals("/health")) {
+            exchange.getResponse().getHeaders().add("Content-Type", "application/json");
+            String healthResponse = "{\"status\":\"UP\",\"timestamp\":" + System.currentTimeMillis() + "}";
+            return exchange.getResponse().writeWith(Mono.just(exchange.getResponse().bufferFactory().wrap(healthResponse.getBytes())));
+        }
+
         /*// allow swagger / openapi
         if (path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-ui.html")) {
             return chain.filter(exchange);

@@ -1,3 +1,24 @@
 .vscode/
-.env
 .idea
+.env
+
+# Node / frontend
+node_modules/
+TiendaGenerica-Frontend-React/node_modules/
+TiendaGenerica-Frontend-React/dist/
+TiendaGenerica-Frontend-React/.env
+TiendaGenerica-Frontend-React/.env.local
+
+# Java / Maven
+**/target/
+**/out/
+*.log
+*.tmp
+
+# Docker
+docker-compose.override.yml
+**/*.env
+
+# OS files
+.DS_Store
+Thumbs.db
