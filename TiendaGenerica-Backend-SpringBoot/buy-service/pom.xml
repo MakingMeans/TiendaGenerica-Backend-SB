@@ -13,7 +13,7 @@
 	<artifactId>buy-service</artifactId>
 	<name>buy-service</name>
 	<description>Buy Service</description>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<!-- Spring Boot Web -->

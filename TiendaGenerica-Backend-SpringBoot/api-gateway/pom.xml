@@ -13,7 +13,7 @@
     <artifactId>api-gateway</artifactId>
     <name>api-gateway</name>
     <description>API Gateway with JWT Validation</description>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- Spring Cloud Gateway (WebFlux) -->
@@ -49,6 +49,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
             <version>2.5.0</version>
+        </dependency>
+
+        <!-- Actuator for health checks -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
         <!-- Testing -->

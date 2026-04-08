@@ -13,7 +13,7 @@
     <artifactId>supplier-service</artifactId>
     <name>supplier-service</name>
     <description>Supplier management CRUD Service</description>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- Spring Boot Web -->

@@ -13,7 +13,7 @@
     <artifactId>authentication-service</artifactId>
     <name>authentication-service</name>
     <description>User Authentication Service</description>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- Spring Boot Web -->

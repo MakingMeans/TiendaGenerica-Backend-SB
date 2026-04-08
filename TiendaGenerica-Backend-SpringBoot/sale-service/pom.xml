@@ -14,7 +14,7 @@
     <artifactId>sale-service</artifactId>
     <name>sale-service</name>
     <description>Sale Service</description>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- Spring Boot Web -->

@@ -226,29 +226,20 @@ cd TiendaGenerica-TransaccionesComerciales
 
 ## 2 Iniciar el sistema
 
-Ejecutar:
+Ejecutar este comando en la carpeta principal del proyecto:
 
 ```
-start_system.bat
+docker-compose up --build
 ```
-
-Este script realiza automáticamente:
-
-1. Levantar la base de datos con Docker
-2. Iniciar Eureka Server
-3. Iniciar API Gateway
-4. Iniciar todos los microservicios
-5. Iniciar el frontend React
-6. Abrir el navegador automáticamente
 
 ---
 
-# Acceso al sistema
+# 3 Acceso al sistema
 
 Frontend:
 
 ```
-http://localhost:3039
+http://localhost:3030
 ```
 
 Eureka Dashboard:
@@ -265,12 +256,17 @@ http://localhost:8080
 
 ---
 
-# Apagar el sistema
+# 4 Apagar el sistema
 
-Ejecutar:
+Ejecutar este comando en la carpeta principal del proyecto:
 
 ```
-stop_system.bat
+docker-compose down -v
+```
+
+Tambien es posible manejar toda la ejecucion de forma sencilla ejecutando:
+```
+start-services.bat
 ```
 
 Esto detendrá:

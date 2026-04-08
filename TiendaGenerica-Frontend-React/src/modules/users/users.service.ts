@@ -1,88 +1,62 @@
+import { api } from 'src/services/api';
+
 import type { User, CreateUserDTO } from './users.types';
 
-const API_URL = "http://localhost:8080/admin/users";
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+const getErrorMessage = (error: unknown, fallback: string) => {
+  const data = (error as any)?.response?.data;
+  return data?.message || data?.error || (error as any)?.message || fallback;
 };
 
 export const updateUserRoles = async (id: number, roles: string[]) => {
-  const token = localStorage.getItem('token');
-
-  const response = await fetch(
-    `http://localhost:8080/admin/users/${id}/roles`,
-    {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`, // 👈 IMPORTANTE
-      },
-      body: JSON.stringify({ roles }),
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error('Error actualizando roles');
+  try {
+    const response = await api.patch(`/admin/users/${id}/roles`, { roles });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user roles:', error);
+    throw new Error(getErrorMessage(error, 'Error updating user roles'));
   }
-
-  return response;
 };
 
-
 export const getUsers = async (): Promise<User[]> => {
-  const response = await fetch(API_URL, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error obteniendo usuarios");
+  try {
+    const response = await api.get('/admin/users');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching users'));
   }
-
-  return response.json();
 };
 
 export const createUser = async (
   data: CreateUserDTO
-): Promise<void> => {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error creando usuario");
+): Promise<User> => {
+  try {
+    const response = await api.post('/admin/users', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw new Error(getErrorMessage(error, 'Error creating user'));
   }
 };
 
 export const updateUser = async (
   id: number,
   updatedData: Partial<User>
-): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(updatedData),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error actualizando usuario");
+): Promise<User> => {
+  try {
+    const response = await api.put(`/admin/users/${id}`, updatedData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw new Error(getErrorMessage(error, 'Error updating user'));
   }
 };
 
 export const deleteUser = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error eliminando usuario");
+  try {
+    await api.delete(`/admin/users/${id}`);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw new Error(getErrorMessage(error, 'Error deleting user'));
   }
 };

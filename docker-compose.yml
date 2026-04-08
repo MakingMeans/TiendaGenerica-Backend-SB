@@ -1,175 +1,436 @@
-# =========================
-# COMPOSE FULL-STACK
-# =========================
-version: "3.9"
-
 services:
 
-# =========================
-# DATABASES
-# =========================
-
-  mysql-auth:
+  # =========================
+  # MYSQL DATABASE
+  # =========================
+  mysql:
     image: mysql:8
-    container_name: mysql_auth
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_aut_db
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
-    volumes:
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/authenticationservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/authenticationservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_auth_data:/var/lib/mysql
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
 
-  mysql-suppliers:
-    image: mysql:8
-    container_name: mysql_suppliers
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_sup_db
-    ports:
-      - "3307:3306"
-    volumes:
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/supplierservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/supplierservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_suppliers_data:/var/lib/mysql
-
-  mysql-sales:
-    image: mysql:8
-    container_name: mysql_sales
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_sal_db
-    ports:
-      - "3308:3306"
-    volumes:
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/saleservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/saleservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_sales_data:/var/lib/mysql
-
-  mysql-catalog:
-    image: mysql:8
-    container_name: mysql_catalog
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_cat_db
-    ports:
-      - "3309:3306"
-    volumes:
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/catalogservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/catalogservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_catalog_data:/var/lib/mysql
-
-  mysql-clients:
-    image: mysql:8
-    container_name: mysql_clients
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_cli_db
-    ports:
-      - "3310:3306"
-    volumes:
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/clientservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/clientservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_clients_data:/var/lib/mysql
-
-  mysql-buy:
-    image: mysql:8
-    container_name: mysql_buy
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_buy_db
-    ports:
-      - "3311:3306"
-    volumes:
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/buyservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./TiendaGenerica-Backend-SpringBoot/init-databases/buyservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_buy_data:/var/lib/mysql
-
-
-# =========================
-# MICROSERVICES
-# =========================
-
-  eureka-server:
+  # =========================
+  # EUREKA SERVER (Service Discovery)
+  # =========================
+  eureka-server-1:
     build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
+    container_name: eureka-server-1
     ports:
       - "8761:8761"
+    environment:
+      EUREKA_INSTANCE_HOSTNAME: eureka-server-1
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+      EUREKA_CLIENT_FETCH_REGISTRY: "false"
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/apps"]
+      timeout: 5s
+      retries: 10
 
-  authentication-service:
-    build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
-    ports:
-      - "8081:8081"
+  eureka-server-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
+    container_name: eureka-server-2
+    environment:
+      EUREKA_INSTANCE_HOSTNAME: eureka-server-2
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "true"
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
     depends_on:
-      - eureka-server
-      - mysql-auth
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
 
-  client-service:
-    build: ./TiendaGenerica-Backend-SpringBoot/client-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - eureka-server
-      - mysql-clients
-
-  supplier-service:
-    build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
-    ports:
-      - "8083:8083"
-    depends_on:
-      - eureka-server
-      - mysql-suppliers
-
-  catalog-service:
-    build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
-    ports:
-      - "8084:8084"
-    depends_on:
-      - eureka-server
-      - mysql-catalog
-
-  buy-service:
-    build: ./TiendaGenerica-Backend-SpringBoot/buy-service
-    ports:
-      - "8085:8085"
-    depends_on:
-      - eureka-server
-      - mysql-buy
-
-  sale-service:
-    build: ./TiendaGenerica-Backend-SpringBoot/sale-service
-    ports:
-      - "8086:8086"
-    depends_on:
-      - eureka-server
-      - mysql-sales
-
-  api-gateway:
+  # =========================
+  # API GATEWAY (X2) - Spring Cloud Gateway
+  # =========================
+  api-gateway-1:
     build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
-    ports:
-      - "8080:8080"
+    container_name: api-gateway-1
+    environment:
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "api-gateway"
+      SERVER_PORT: "8080"
     depends_on:
-      - eureka-server
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/internal/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
+  api-gateway-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
+    container_name: api-gateway-2
+    environment:
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "api-gateway"
+      SERVER_PORT: "8080"
+    depends_on:
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/internal/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
 
-# =========================
-# FRONTEND
-# =========================
+  # =========================
+  # NGINX GATEWAY (External Proxy)
+  # Port 8080 es accesible desde host
+  # =========================
+  nginx-gateway:
+    image: nginx:alpine
+    container_name: nginx-gateway
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx-gateway.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      api-gateway-1:
+        condition: service_healthy
+      api-gateway-2:
+        condition: service_healthy
+    networks:
+      - backend_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      timeout: 5s
+      retries: 10
 
-  frontend:
+  # =========================
+  # AUTHENTICATION SERVICE (X2)
+  # =========================
+  authentication-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
+    container_name: authentication-service-1
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: authenticationservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "authentication-service"
+      SERVER_PORT: "8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  authentication-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
+    container_name: authentication-service-2
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: authenticationservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "authentication-service"
+      SERVER_PORT: "8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  # =========================
+  # CATALOG SERVICE (X2)
+  # =========================
+  catalog-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
+    container_name: catalog-service-1
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: catalogservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "catalog-service"
+      SERVER_PORT: "8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  catalog-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
+    container_name: catalog-service-2
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: catalogservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "catalog-service"
+      SERVER_PORT: "8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  # =========================
+  # CLIENT SERVICE (X2)
+  # =========================
+  client-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/client-service
+    container_name: client-service-1
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: clientservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "client-service"
+      SERVER_PORT: "8083"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  client-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/client-service
+    container_name: client-service-2
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: clientservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "client-service"
+      SERVER_PORT: "8083"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  # =========================
+  # SUPPLIER SERVICE (X2)
+  # =========================
+  supplier-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
+    container_name: supplier-service-1
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: supplierservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "supplier-service"
+      SERVER_PORT: "8084"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  supplier-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
+    container_name: supplier-service-2
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: supplierservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "supplier-service"
+      SERVER_PORT: "8084"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  # =========================
+  # SALE SERVICE (X2)
+  # =========================
+  sale-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/sale-service
+    container_name: sale-service-1
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: saleservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "sale-service"
+      SERVER_PORT: "8085"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  sale-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/sale-service
+    container_name: sale-service-2
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: saleservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "sale-service"
+      SERVER_PORT: "8085"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  # =========================
+  # BUY SERVICE (X2)
+  # =========================
+  buy-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/buy-service
+    container_name: buy-service-1
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: buyservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "buy-service"
+      SERVER_PORT: "8086"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+      catalog-service-1:
+        condition: service_started
+      supplier-service-1:
+        condition: service_started
+    networks:
+      - backend_net
+
+  buy-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/buy-service
+    container_name: buy-service-2
+    environment:
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: buyservice
+      DB_USER: root
+      DB_PASSWORD: root
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      SPRING_APPLICATION_NAME: "buy-service"
+      SERVER_PORT: "8086"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server-1:
+        condition: service_healthy
+      catalog-service-2:
+        condition: service_started
+      supplier-service-2:
+        condition: service_started
+    networks:
+      - backend_net
+
+  # =========================
+  # FRONTEND REACT (X2)
+  # =========================
+  frontend-1:
     build: ./TiendaGenerica-Frontend-React
+    container_name: frontend-1
+    environment:
+      VITE_API_URL: "http://localhost:8080"
+    networks:
+      - frontend_net
+
+  frontend-2:
+    build: ./TiendaGenerica-Frontend-React
+    container_name: frontend-2
+    environment:
+      VITE_API_URL: "http://localhost:8080"
+    networks:
+      - frontend_net
+
+  # =========================
+  # NGINX FRONTEND (SPA Load Balancer)
+  # Port 3000 es accesible desde host para la app
+  # =========================
+  nginx-frontend:
+    image: nginx:alpine
+    container_name: nginx-frontend
     ports:
-      - "3039:3039"
+      - "3000:80"
+    volumes:
+      - ./nginx/nginx-frontend.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - api-gateway
+      - frontend-1
+      - frontend-2
+    networks:
+      - frontend_net
+      - backend_net
 
+# =========================
+# NETWORKS
+# =========================
+networks:
+  backend_net:
+    driver: bridge
+  frontend_net:
+    driver: bridge
 
+# =========================
+# VOLUMES
+# =========================
 volumes:
-
-  mysql_auth_data:
-  mysql_suppliers_data:
-  mysql_sales_data:
-  mysql_catalog_data:
-  mysql_clients_data:
-  mysql_buy_data:
+  mysql_data:
