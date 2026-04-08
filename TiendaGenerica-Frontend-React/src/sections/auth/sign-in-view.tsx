@@ -28,16 +28,29 @@ export function SignInView() {
     try {
       setError('');
 
-      const response = await login({
+      const loginData = {
         username: email,
         password,
-      });
+      };
+
+      console.log('🚀 Starting login process with data:', loginData);
+
+      const response = await login(loginData);
+
+      console.log('🎉 Login successful, token received:', response.token ? 'YES' : 'NO');
 
       loginUser(response.token);
 
       navigate('/');
     } catch (err) {
-      setError('Credenciales inválidas');
+      console.error('💥 Login failed:', err);
+
+      const errorMessage = (err as any)?.response?.data?.message ||
+                          (err as any)?.response?.data?.error ||
+                          (err as any)?.message ||
+                          'Credenciales inválidas';
+
+      setError(errorMessage);
     }
   }, [email, password, loginUser, navigate]);
 

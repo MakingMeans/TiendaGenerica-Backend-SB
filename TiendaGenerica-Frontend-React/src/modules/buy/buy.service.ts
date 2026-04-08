@@ -1,49 +1,47 @@
-import type { Buy, CreateBuyDTO } from "./buy.types";
+import { api } from 'src/services/api';
 
-const API_URL = "http://localhost:8080/buys";
+import type { Buy, CreateBuyDTO } from './buy.types';
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+const getErrorMessage = (error: unknown, fallback: string) => {
+  const data = (error as any)?.response?.data;
+  return data?.message || data?.error || (error as any)?.message || fallback;
 };
 
 export const getBuys = async (): Promise<Buy[]> => {
-  const response = await fetch(API_URL, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error obteniendo compras");
+  try {
+    const response = await api.get('/buys');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching buys:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching buys'));
   }
+};
 
-  return response.json();
+export const getBuyById = async (id: number): Promise<Buy> => {
+  try {
+    const response = await api.get(`/buys/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching buy:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching buy'));
+  }
 };
 
 export const createBuy = async (data: CreateBuyDTO) => {
-  const response = await fetch("http://localhost:8080/buys", {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error creando compra");
+  try {
+    const response = await api.post('/buys', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating buy:', error);
+    throw new Error(getErrorMessage(error, 'Error creating buy'));
   }
-
-  return response.json();
 };
-export const deleteBuy = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
 
-  if (!response.ok) {
-    throw new Error("Error eliminando compra");
+export const deleteBuy = async (id: number): Promise<void> => {
+  try {
+    await api.delete(`/buys/${id}`);
+  } catch (error) {
+    console.error('Error deleting buy:', error);
+    throw new Error(getErrorMessage(error, 'Error deleting buy'));
   }
 };

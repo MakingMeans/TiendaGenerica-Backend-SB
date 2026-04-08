@@ -1,84 +1,78 @@
-import type { Product, CreateProductDTO } from "./catalog.types";
+import { api } from 'src/services/api';
 
-const API_URL = "http://localhost:8080/catalog";
+import type { Product, CreateProductDTO } from './catalog.types';
 
-const getAuthHeaders = () => {
-  const token = localStorage.getItem("token");
-
-  return {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  };
+const getErrorMessage = (error: unknown, fallback: string) => {
+  const data = (error as any)?.response?.data;
+  return data?.message || data?.error || (error as any)?.message || fallback;
 };
 
 export const getProducts = async (): Promise<Product[]> => {
-  const response = await fetch(API_URL, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error obteniendo productos");
+  try {
+    const response = await api.get('/catalog');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching products'));
   }
+};
 
-  return response.json();
+export const getProductById = async (id: number): Promise<Product> => {
+  try {
+    const response = await api.get(`/catalog/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching product'));
+  }
 };
 
 export const createProduct = async (
   data: CreateProductDTO
-): Promise<void> => {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error creando producto");
+): Promise<Product> => {
+  try {
+    const response = await api.post('/catalog', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating product:', error);
+    throw new Error(getErrorMessage(error, 'Error creating product'));
   }
 };
 
 export const updateProduct = async (
   id: number,
   data: Partial<Product>
-): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error actualizando producto");
+): Promise<Product> => {
+  try {
+    const response = await api.put(`/catalog/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating product:', error);
+    throw new Error(getErrorMessage(error, 'Error updating product'));
   }
 };
 
 export const deleteProduct = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}/act`, {
-    method: "DELETE",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error eliminando producto");
+  try {
+    await api.delete(`/catalog/${id}/act`);
+  } catch (error) {
+    console.error('Error deleting product:', error);
+    throw new Error(getErrorMessage(error, 'Error deleting product'));
   }
 };
 
 export async function uploadCatalogCsv(file: File) {
-  const token = localStorage.getItem("token");
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
 
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const response = await fetch(`${API_URL}/upload`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error("Error al subir el archivo CSV");
+    await api.post('/catalog/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  } catch (error) {
+    console.error('Error uploading catalog CSV:', error);
+    throw new Error(getErrorMessage(error, 'Error uploading catalog CSV'));
   }
 }

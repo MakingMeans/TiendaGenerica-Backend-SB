@@ -1,119 +1,203 @@
-# =========================
-# COMPOSE DB
-# =========================
-version: '3.8'
+version: "3.9"
 
 services:
 
   # =========================
-  # AUTH SERVICE DB
+  # MYSQL
   # =========================
-  mysql-auth:
+  mysql:
     image: mysql:8
-    container_name: mysql_auth
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_aut_db
+    volumes:
+      - ./TiendaGenerica-Backend-SpringBoot/init-databases:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-    volumes:
-      - ./init-databases/authenticationservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./init-databases/authenticationservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_auth_data:/var/lib/mysql
-
+    networks:
+      - backend_net
 
   # =========================
-  # SUPPLIERS SERVICE DB
+  # EUREKA (X2)
   # =========================
-  mysql-suppliers:
-    image: mysql:8
-    container_name: mysql_suppliers
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_sup_db
+  eureka-server-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
     ports:
-      - "3307:3306"
-    volumes:
-      - ./init-databases/supplierservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./init-databases/supplierservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_suppliers_data:/var/lib/mysql
+      - "8761:8761"
+    networks:
+      - backend_net
 
+  eureka-server-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
+    networks:
+      - backend_net
 
   # =========================
-  # SALES SERVICE DB
+  # API GATEWAY (X2)
   # =========================
-  mysql-sales:
-    image: mysql:8
-    container_name: mysql_sales
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_sal_db
+  api-gateway-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
+    depends_on:
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  api-gateway-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
+    depends_on:
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  # =========================
+  # AUTH SERVICE (X2)
+  # =========================
+  authentication-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  authentication-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  # =========================
+  # BUY SERVICE (X2)
+  # depende de catalog + supplier
+  # =========================
+  buy-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/buy-service
+    depends_on:
+      - catalog-service-1
+      - supplier-service-1
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  buy-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/buy-service
+    depends_on:
+      - catalog-service-2
+      - supplier-service-2
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  # =========================
+  # CATALOG SERVICE (X2)
+  # =========================
+  catalog-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  catalog-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  # =========================
+  # CLIENT SERVICE (X2)
+  # =========================
+  client-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/client-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  client-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/client-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  # =========================
+  # SALE SERVICE (X2)
+  # depende de catalog + client
+  # =========================
+  sale-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/sale-service
+    depends_on:
+      - catalog-service-1
+      - client-service-1
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  sale-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/sale-service
+    depends_on:
+      - catalog-service-2
+      - client-service-2
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  # =========================
+  # SUPPLIER SERVICE (X2)
+  # =========================
+  supplier-service-1:
+    build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  supplier-service-2:
+    build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
+    depends_on:
+      - mysql
+      - eureka-server-1
+    networks:
+      - backend_net
+
+  # =========================
+  # FRONTEND (X2)
+  # =========================
+  frontend-1:
+    build: ./TiendaGenerica-Frontend-React
+    networks:
+      - frontend_net
+
+  frontend-2:
+    build: ./TiendaGenerica-Frontend-React
+    networks:
+      - frontend_net
+
+  # =========================
+  # NGINX FRONT (BALANCEADOR)
+  # =========================
+  nginx-frontend:
+    image: nginx:alpine
     ports:
-      - "3308:3306"
+      - "8080:80"
     volumes:
-      - ./init-databases/saleservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./init-databases/saleservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_sales_data:/var/lib/mysql
+      - ./nginx/nginx-frontend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend-1
+      - frontend-2
+    networks:
+      - frontend_net
+      - backend_net
 
-
-  # =========================
-  # CATALOG SERVICE DB
-  # =========================
-  mysql-catalog:
-    image: mysql:8
-    container_name: mysql_catalog
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_cat_db
-    ports:
-      - "3309:3306"
-    volumes:
-      - ./init-databases/catalogservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./init-databases/catalogservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_catalog_data:/var/lib/mysql
-
-
-  # =========================
-  # CLIENT SERVICE DB
-  # =========================
-  mysql-clients:
-    image: mysql:8
-    container_name: mysql_clients
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_cli_db
-    ports:
-      - "3310:3306"
-    volumes:
-      - ./init-databases/clientservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./init-databases/clientservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_clients_data:/var/lib/mysql
-
-
-  # =========================
-  # BUY SERVICE DB
-  # =========================
-  mysql-buy:
-    image: mysql:8
-    container_name: mysql_buy
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: tienda_buy_db
-    ports:
-      - "3311:3306"
-    volumes:
-      - ./init-databases/buyservice/create.sql:/docker-entrypoint-initdb.d/1-create.sql
-      - ./init-databases/buyservice/insert.sql:/docker-entrypoint-initdb.d/2-insert.sql
-      - mysql_buy_data:/var/lib/mysql
-
-
-# =========================
-# VOLUMES
-# =========================
-volumes:
-  mysql_auth_data:
-  mysql_suppliers_data:
-  mysql_sales_data:
-  mysql_catalog_data:
-  mysql_clients_data:
-  mysql_buy_data:
+networks:
+  backend_net:
+  frontend_net:

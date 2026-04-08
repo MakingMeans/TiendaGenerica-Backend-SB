@@ -1,101 +1,85 @@
+import { api } from 'src/services/api';
+
 import type {
   Supplier,
   CreateSupplierDTO,
   UpdateSupplierDTO,
 } from './suppliers.types';
 
-const API_URL = 'http://localhost:8080/suppliers';
-
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
-
-  return {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${token}`,
-  };
+const getErrorMessage = (error: unknown, fallback: string) => {
+  const data = (error as any)?.response?.data;
+  return data?.message || data?.error || (error as any)?.message || fallback;
 };
 
-// 🔎 GET ALL
 export const getSuppliers = async (): Promise<Supplier[]> => {
-  const response = await fetch(API_URL, {
-    method: 'GET',
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error('Error obteniendo proveedores');
+  try {
+    const response = await api.get('/suppliers');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching suppliers:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching suppliers'));
   }
-
-  return response.json();
 };
 
-// ➕ CREATE
+export const getSupplierById = async (id: number): Promise<Supplier> => {
+  try {
+    const response = await api.get(`/suppliers/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching supplier:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching supplier'));
+  }
+};
+
 export const createSupplier = async (
   data: CreateSupplierDTO
-): Promise<void> => {
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error('Error creando proveedor');
+): Promise<Supplier> => {
+  try {
+    const response = await api.post('/suppliers', data);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating supplier:', error);
+    throw new Error(getErrorMessage(error, 'Error creating supplier'));
   }
-
 };
 
-// ✏️ UPDATE
 export const updateSupplier = async (
   id: number,
   data: UpdateSupplierDTO
-): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'PUT',
-    headers: getAuthHeaders(),
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error('Error actualizando proveedor');
+): Promise<Supplier> => {
+  try {
+    const response = await api.put(`/suppliers/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating supplier:', error);
+    throw new Error(getErrorMessage(error, 'Error updating supplier'));
   }
-
-
 };
 
-// 🗑 DELETE HARD
 export const deleteSupplier = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'DELETE',
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error('Error eliminando proveedor');
+  try {
+    await api.delete(`/suppliers/${id}`);
+  } catch (error) {
+    console.error('Error deleting supplier:', error);
+    throw new Error(getErrorMessage(error, 'Error deleting supplier'));
   }
 };
 
-// 🔒 DEACTIVATE (si tu backend usa endpoint /act)
 export const deactivateSupplier = async (id: number): Promise<void> => {
-  const response = await fetch(`${API_URL}/${id}/act`, {
-    method: 'DELETE',
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error('Error desactivando proveedor');
+  try {
+    await api.delete(`/suppliers/${id}/act`);
+  } catch (error) {
+    console.error('Error deactivating supplier:', error);
+    throw new Error(getErrorMessage(error, 'Error deactivating supplier'));
   }
 };
 
 export const getActiveProviders = async (): Promise<Supplier[]> => {
-  const response = await fetch(`${API_URL}/active-nits`, {
-    method: "GET",
-    headers: getAuthHeaders(),
-  });
-
-  if (!response.ok) {
-    throw new Error("Error obteniendo proveedores");
+  try {
+    const response = await api.get('/suppliers/active-nits');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching active providers:', error);
+    throw new Error(getErrorMessage(error, 'Error fetching active providers'));
   }
-
-  return response.json();
 };

@@ -13,6 +13,7 @@
     <artifactId>catalog-service</artifactId>
     <name>catalog-service</name>
     <description>Catalog management CRUD Service</description>
+    <packaging>jar</packaging>
 
     <dependencies>
         <!-- Spring Boot Web -->

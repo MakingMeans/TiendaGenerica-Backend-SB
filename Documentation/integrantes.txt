@@ -1,0 +1,63 @@
+TIENDA GENÉRICA VIRTUAL - GRUPO #2
+
+INTEGRANTES Y ROLES
+
+1. David Santiago García Preciado
+   Rol principal: Backend - Líder técnico
+
+   Responsabilidades:
+   - Creación y administración del repositorio en GitHub
+   - Liderazgo en el flujo de trabajo con Git (commits,
+     merge requests, revisión de pull requests)
+   - Desarrollo del microservicio eureka-server
+     (registro y descubrimiento de servicios)
+   - Desarrollo del microservicio api-gateway
+     (enrutamiento, validación JWT, CORS, seguridad)
+   - Desarrollo del microservicio authentication-service
+     (login, JWT, roles, BCrypt, gestión de usuarios)
+   - Desarrollo del microservicio catalog-service
+     (gestión de productos, control de stock, carga CSV)
+   - Desarrollo del microservicio supplier-service
+     (gestión de proveedores)
+   - Corrección de bugs transversales al backend
+   - Coordinación del equipo en la integración de ramas
+
+2. Fernando Javier Alvarado Arispe
+   Rol principal: Backend - Bases de datos y servicios
+
+   Responsabilidades:
+   - Diseño completo del esquema de base de datos
+     de todos los microservicios (tablas, relaciones,
+     constraints, scripts create.sql e insert.sql)
+   - Configuración e instalación de Java, JDK, Maven, y
+     MySQL en cada máquina virtual Ubuntu correspondiente
+   - Desarrollo del microservicio client-service
+     (gestión de clientes)
+   - Desarrollo del microservicio buy-service
+     (registro de compras a proveedores, actualización
+     de stock en catalog-service)
+   - Desarrollo del microservicio sale-service
+     (registro de ventas, cálculo de IVA, métodos
+     de pago, descuento de stock)
+   - Manejo y corrección de bugs relacionados con
+     persistencia y comunicación entre servicios
+
+3. Jorge Orlando Jaramillo Nieves
+   Rol principal: Frontend
+
+   Responsabilidades:
+   - Diseño de mockups y flujo de pantallas de la
+     aplicación antes del desarrollo
+   - Desarrollo completo del frontend como SPA
+     (Single Page Application) usando React con
+     TypeScript y Vite
+   - Implementación de diseño responsive para
+     distintos tamaños de pantalla
+   - Conexión completa del frontend con el backend
+     usando las colecciones de Postman como referencia
+     para consumir cada endpoint del API Gateway
+   - Identificación y reporte de bugs encontrados
+     durante la integración frontend-backend
+   - Detección de inconsistencias en el comportamiento
+     de la API que afectaban la experiencia de usuario,
+     coordinando con el equipo de backend su corrección
