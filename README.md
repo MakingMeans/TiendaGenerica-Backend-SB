@@ -83,13 +83,13 @@ TiendaGenerica-TransaccionesComerciales
 │   ├── sale-service
 │   ├── supplier-service
 │   ├── init-databases
-│   └── docker-compose.yml
+│   ├── docker-compose.yml
+│   └── deploy-jars.bat
 │
 ├── TiendaGenerica-Frontend-React
 │
-├── start_system.bat
-├── stop_system.bat
-└── setup_env.bat
+├── docker-compose.yml
+└── start-services.bat
 ```
 
 ---
@@ -239,7 +239,7 @@ docker-compose up --build
 Frontend:
 
 ```
-http://localhost:3030
+http://localhost:3000
 ```
 
 Eureka Dashboard:

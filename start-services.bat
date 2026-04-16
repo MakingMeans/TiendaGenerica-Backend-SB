@@ -12,7 +12,7 @@ echo Esperando a que levanten los servicios...
 timeout /t 240 /nobreak >nul
 
 echo Abriendo navegador...
-start http://localhost:3030
+start http://localhost:3000
 start http://localhost:8761
 
 echo.
