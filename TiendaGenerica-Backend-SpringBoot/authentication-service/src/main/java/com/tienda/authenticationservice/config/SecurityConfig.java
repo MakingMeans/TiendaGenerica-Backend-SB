@@ -31,7 +31,7 @@ public class SecurityConfig {
 
         http
             // Enable CORS
-            .cors(cors -> cors.configurationSource(corsConfigurationSource))
+            .cors(cors -> cors.disable())
             
             // Disable CSRF (JWT handles security)
             .csrf(csrf -> csrf.disable())
@@ -50,6 +50,7 @@ public class SecurityConfig {
                 // Public authentication endpoints
                 .requestMatchers(
                     "/auth/login",
+                    "/auth/signup",
                     "/auth/register",
                     "/auth/validate",
                     "/auth/refresh",

@@ -1,6 +1,11 @@
 nombre,descripcion,precioVenta,iva,stockActual,stockMinimo,stockMaximo
-Arroz,Arroz blanco 1kg,15000,19,100,10,500
-Azucar,Azucar refinada 1kg,11000,19,200,20,600
-Sal,Sal fina 500g,3500,19,300,30,700
-Cafe,Cafe molido premium,18000,19,150,15,400
-Leche,Leche entera 1L,4500,5,120,12,300
+Laptop Lenovo IdeaPad,Laptop Lenovo IdeaPad 15" 8GB RAM 512GB SSD,2850000,19,25,5,60
+Mouse Logitech M185,Mouse inalámbrico Logitech M185 USB,65000,19,80,10,200
+Teclado Redragon Kumara,Teclado mecánico Redragon Kumara RGB,210000,19,40,5,120
+Monitor Samsung 24,Monitor Samsung 24" Full HD IPS,720000,19,30,5,90
+Disco SSD Kingston 1TB,Disco sólido Kingston 1TB SATA,420000,19,50,8,150
+Memoria USB 64GB SanDisk,Memoria USB SanDisk 64GB USB 3.0,38000,19,120,20,300
+Audifonos Sony WH-CH520,Audífonos inalámbricos Sony Bluetooth,320000,19,35,5,100
+Webcam Logitech C270,Cámara web Logitech HD 720p,140000,19,45,8,120
+Router TP-Link Archer C6,Router TP-Link Archer C6 doble banda AC1200,230000,19,28,5,80
+Tablet Samsung Galaxy Tab A9,Tablet Samsung Galaxy Tab A9 64GB WiFi,890000,19,18,3,50
