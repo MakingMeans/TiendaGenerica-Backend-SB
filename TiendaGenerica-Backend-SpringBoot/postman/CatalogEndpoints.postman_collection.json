@@ -227,7 +227,7 @@
               "key": "file",
               "type": "file",
               "uuid": "bede673e-79b2-4262-a083-0ae631c6362b",
-              "src": "/C:/Users/david/Documents/UNBOSQUE/Semestre7/TiendaGenerica-TransaccionesComerciales/TiendaGenerica-Backend-SpringBoot/postman/catalogCSVinsert.csv"
+              "src": "/C:/Users/david/Documents/UNBOSQUE/Semestre7/TiendaGenerica-Microservicios/TiendaGenerica-Backend-SpringBoot/postman/catalogCSVinsert.csv"
             }
           ]
         },

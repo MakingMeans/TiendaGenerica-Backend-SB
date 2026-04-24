@@ -1,4 +1,4 @@
-# TiendaGenerica-TransaccionesComerciales
+# TiendaGenerica-Microservicios
 
 Sistema web para la gestión de transacciones comerciales de una tienda desarrollado con una **arquitectura de microservicios** utilizando **Spring Boot + Spring Cloud + React + MySQL**.
 
@@ -71,7 +71,7 @@ Control de versiones:
 # Estructura del Proyecto
 
 ```
-TiendaGenerica-TransaccionesComerciales
+TiendaGenerica-Microservicios
 │
 ├── TiendaGenerica-Backend-SpringBoot
 │   ├── api-gateway
@@ -218,8 +218,8 @@ git --version
 ## 1 Clonar repositorio
 
 ```
-git clone https://github.com/MakingMeans/TiendaGenerica-TransaccionesComerciales
-cd TiendaGenerica-TransaccionesComerciales
+git clone https://github.com/MakingMeans/TiendaGenerica-Microservicios
+cd TiendaGenerica-Microservicios
 ```
 
 ---

@@ -23,7 +23,7 @@ export default function App({ children }: AppProps) {
     <Fab
       size="medium"
       aria-label="Github"
-      href="https://github.com/MakingMeans/TiendaGenerica-TransaccionesComerciales"
+      href="https://github.com/MakingMeans/TiendaGenerica-Microservicios"
       sx={{
         zIndex: 9,
         right: 20,
