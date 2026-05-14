@@ -19,8 +19,10 @@ services:
     image: mysql:8
     container_name: mysql
     restart: always
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
       MYSQL_ROOT_HOST: '%'
     volumes:
       - ./TiendaGenerica-Backend-SpringBoot/init-databases:/docker-entrypoint-initdb.d
@@ -43,6 +45,8 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
     container_name: eureka-server-1
     restart: always
+    env_file:
+      - .env
     ports:
       - "${EUREKA_PORT:-8761}:8761"
     environment:
@@ -61,6 +65,8 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
     container_name: eureka-server-2
     restart: always
+    env_file:
+      - .env
     environment:
       EUREKA_INSTANCE_HOSTNAME: eureka-server-2
       EUREKA_CLIENT_REGISTER_WITH_EUREKA: "true"
@@ -83,13 +89,15 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
     container_name: api-gateway-1
     restart: always
+    env_file:
+      - .env
     environment:
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "api-gateway"
       SERVER_PORT: "8080"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
@@ -106,13 +114,15 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
     container_name: api-gateway-2
     restart: always
+    env_file:
+      - .env
     environment:
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "api-gateway"
       SERVER_PORT: "8080"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
@@ -155,18 +165,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
     container_name: authentication-service-1
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: authenticationservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "authentication-service"
       SERVER_PORT: "8081"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -185,18 +197,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
     container_name: authentication-service-2
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: authenticationservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "authentication-service"
       SERVER_PORT: "8081"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -218,18 +232,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
     container_name: catalog-service-1
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: catalogservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "catalog-service"
       SERVER_PORT: "8082"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -248,18 +264,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
     container_name: catalog-service-2
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: catalogservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "catalog-service"
       SERVER_PORT: "8082"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -281,18 +299,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/client-service
     container_name: client-service-1
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: clientservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "client-service"
       SERVER_PORT: "8083"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -311,18 +331,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/client-service
     container_name: client-service-2
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: clientservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "client-service"
       SERVER_PORT: "8083"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -344,18 +366,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
     container_name: supplier-service-1
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: supplierservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "supplier-service"
       SERVER_PORT: "8084"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -374,18 +398,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
     container_name: supplier-service-2
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: supplierservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "supplier-service"
       SERVER_PORT: "8084"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -407,18 +433,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/sale-service
     container_name: sale-service-1
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: saleservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "sale-service"
       SERVER_PORT: "8085"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -437,18 +465,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/sale-service
     container_name: sale-service-2
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: saleservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "sale-service"
       SERVER_PORT: "8085"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -470,18 +500,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/buy-service
     container_name: buy-service-1
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: buyservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "buy-service"
       SERVER_PORT: "8086"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -504,18 +536,20 @@ services:
     build: ./TiendaGenerica-Backend-SpringBoot/buy-service
     container_name: buy-service-2
     restart: always
+    env_file:
+      - .env
     environment:
       DB_HOST: ${DB_HOST:-mysql}
       DB_PORT: ${DB_PORT:-3306}
       DB_NAME: buyservice
-      DB_USER: ${DB_USER:-root}
-      DB_PASSWORD: ${DB_PASSWORD:-root}
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "buy-service"
       SERVER_PORT: "8086"
-      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
-      GATEWAY_SECRET: ${GATEWAY_SECRET:-change-me-in-production}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
       GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
       SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
       JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
@@ -544,6 +578,8 @@ services:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: frontend-1
     restart: always
+    env_file:
+      - .env
     networks:
       - frontend_net
     healthcheck:
@@ -557,6 +593,8 @@ services:
         VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: frontend-2
     restart: always
+    env_file:
+      - .env
     networks:
       - frontend_net
     healthcheck:
@@ -571,6 +609,8 @@ services:
     image: nginx:alpine
     container_name: nginx-frontend
     restart: always
+    env_file:
+      - .env
     ports:
       - "${FRONTEND_PORT:-3000}:80"
     volumes:
