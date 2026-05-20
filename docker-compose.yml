@@ -1,3 +1,15 @@
+x-spring-healthcheck-defaults: &spring-healthcheck-defaults
+  interval: 10s
+  timeout: 5s
+  retries: 10
+  start_period: 30s
+
+x-nginx-healthcheck-defaults: &nginx-healthcheck-defaults
+  interval: 10s
+  timeout: 5s
+  retries: 10
+  start_period: 10s
+
 services:
 
   # =========================
@@ -6,20 +18,24 @@ services:
   mysql:
     image: mysql:8
     container_name: mysql
+    restart: always
+    
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?MYSQL_ROOT_PASSWORD is required}
       MYSQL_ROOT_HOST: '%'
     volumes:
       - ./TiendaGenerica-Backend-SpringBoot/init-databases:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     networks:
       - backend_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 30s
 
   # =========================
   # EUREKA SERVER (Service Discovery)
@@ -27,31 +43,41 @@ services:
   eureka-server-1:
     build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
     container_name: eureka-server-1
+    restart: always
+    
     ports:
-      - "8761:8761"
+      - "${EUREKA_PORT:-8761}:8761"
     environment:
       EUREKA_INSTANCE_HOSTNAME: eureka-server-1
       EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
       EUREKA_CLIENT_FETCH_REGISTRY: "false"
+      SERVER_PORT: "8761"
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     networks:
       - backend_net
     healthcheck:
+      <<: *spring-healthcheck-defaults
       test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/apps"]
-      timeout: 5s
-      retries: 10
 
   eureka-server-2:
     build: ./TiendaGenerica-Backend-SpringBoot/eureka-server
     container_name: eureka-server-2
+    restart: always
+    
     environment:
       EUREKA_INSTANCE_HOSTNAME: eureka-server-2
       EUREKA_CLIENT_REGISTER_WITH_EUREKA: "true"
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
+      SERVER_PORT: "8761"
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       eureka-server-1:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD", "curl", "-f", "http://localhost:8761/eureka/apps"]
 
   # =========================
   # API GATEWAY (X2) - Spring Cloud Gateway
@@ -59,39 +85,49 @@ services:
   api-gateway-1:
     build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
     container_name: api-gateway-1
+    restart: always
+    
     environment:
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "api-gateway"
       SERVER_PORT: "8080"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       eureka-server-1:
         condition: service_healthy
     networks:
       - backend_net
     healthcheck:
+      <<: *spring-healthcheck-defaults
       test: ["CMD", "curl", "-f", "http://localhost:8080/internal/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
       start_period: 15s
 
   api-gateway-2:
     build: ./TiendaGenerica-Backend-SpringBoot/api-gateway
     container_name: api-gateway-2
+    restart: always
+    
     environment:
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "api-gateway"
       SERVER_PORT: "8080"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       eureka-server-1:
         condition: service_healthy
     networks:
       - backend_net
     healthcheck:
+      <<: *spring-healthcheck-defaults
       test: ["CMD", "curl", "-f", "http://localhost:8080/internal/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
       start_period: 15s
 
   # =========================
@@ -101,8 +137,9 @@ services:
   nginx-gateway:
     image: nginx:alpine
     container_name: nginx-gateway
+    restart: always
     ports:
-      - "8080:80"
+      - "${API_GATEWAY_PORT:-8080}:80"
     volumes:
       - ./nginx/nginx-gateway.conf:/etc/nginx/nginx.conf:ro
     depends_on:
@@ -113,9 +150,8 @@ services:
     networks:
       - backend_net
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost/health"]
-      timeout: 5s
-      retries: 10
+      <<: *nginx-healthcheck-defaults
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/health"]
 
   # =========================
   # AUTHENTICATION SERVICE (X2)
@@ -123,15 +159,23 @@ services:
   authentication-service-1:
     build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
     container_name: authentication-service-1
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: authenticationservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "authentication-service"
       SERVER_PORT: "8081"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -139,19 +183,30 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8081/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   authentication-service-2:
     build: ./TiendaGenerica-Backend-SpringBoot/authentication-service
     container_name: authentication-service-2
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: authenticationservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "authentication-service"
       SERVER_PORT: "8081"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -159,6 +214,9 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8081/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   # =========================
   # CATALOG SERVICE (X2)
@@ -166,15 +224,23 @@ services:
   catalog-service-1:
     build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
     container_name: catalog-service-1
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: catalogservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "catalog-service"
       SERVER_PORT: "8082"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -182,19 +248,30 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8082/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   catalog-service-2:
     build: ./TiendaGenerica-Backend-SpringBoot/catalog-service
     container_name: catalog-service-2
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: catalogservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "catalog-service"
       SERVER_PORT: "8082"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -202,6 +279,9 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8082/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   # =========================
   # CLIENT SERVICE (X2)
@@ -209,15 +289,23 @@ services:
   client-service-1:
     build: ./TiendaGenerica-Backend-SpringBoot/client-service
     container_name: client-service-1
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: clientservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "client-service"
       SERVER_PORT: "8083"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -225,19 +313,30 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8083/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   client-service-2:
     build: ./TiendaGenerica-Backend-SpringBoot/client-service
     container_name: client-service-2
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: clientservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "client-service"
       SERVER_PORT: "8083"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -245,6 +344,9 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8083/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   # =========================
   # SUPPLIER SERVICE (X2)
@@ -252,15 +354,23 @@ services:
   supplier-service-1:
     build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
     container_name: supplier-service-1
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: supplierservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "supplier-service"
       SERVER_PORT: "8084"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -268,19 +378,30 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8084/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   supplier-service-2:
     build: ./TiendaGenerica-Backend-SpringBoot/supplier-service
     container_name: supplier-service-2
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: supplierservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "supplier-service"
       SERVER_PORT: "8084"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -288,6 +409,9 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8084/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   # =========================
   # SALE SERVICE (X2)
@@ -295,15 +419,23 @@ services:
   sale-service-1:
     build: ./TiendaGenerica-Backend-SpringBoot/sale-service
     container_name: sale-service-1
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: saleservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "sale-service"
       SERVER_PORT: "8085"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -311,19 +443,30 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8085/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   sale-service-2:
     build: ./TiendaGenerica-Backend-SpringBoot/sale-service
     container_name: sale-service-2
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: saleservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "sale-service"
       SERVER_PORT: "8085"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
@@ -331,6 +474,9 @@ services:
         condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8085/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   # =========================
   # BUY SERVICE (X2)
@@ -338,69 +484,103 @@ services:
   buy-service-1:
     build: ./TiendaGenerica-Backend-SpringBoot/buy-service
     container_name: buy-service-1
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: buyservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "buy-service"
       SERVER_PORT: "8086"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
       eureka-server-1:
         condition: service_healthy
       catalog-service-1:
-        condition: service_started
+        condition: service_healthy
       supplier-service-1:
-        condition: service_started
+        condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8086/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   buy-service-2:
     build: ./TiendaGenerica-Backend-SpringBoot/buy-service
     container_name: buy-service-2
+    restart: always
+    
     environment:
-      DB_HOST: mysql
-      DB_PORT: "3306"
+      DB_HOST: ${DB_HOST:-mysql}
+      DB_PORT: ${DB_PORT:-3306}
       DB_NAME: buyservice
-      DB_USER: root
-      DB_PASSWORD: root
-      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: "http://eureka-server-1:8761/eureka/"
+      DB_USER: ${DB_USER:?DB_USER is required}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: ${EUREKA_DEFAULT_ZONE:-http://eureka-server-1:8761/eureka/}
       SPRING_APPLICATION_NAME: "buy-service"
       SERVER_PORT: "8086"
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      GATEWAY_SECRET: ${GATEWAY_SECRET:?GATEWAY_SECRET is required}
+      GATEWAY_URL: ${GATEWAY_URL:-http://localhost:8080}
+      SPRING_JPA_SHOW_SQL: ${SPRING_JPA_SHOW_SQL:-false}
+      JAVA_OPTS: ${JAVA_OPTS:--XX:MaxRAMPercentage=75.0}
     depends_on:
       mysql:
         condition: service_healthy
       eureka-server-1:
         condition: service_healthy
       catalog-service-2:
-        condition: service_started
+        condition: service_healthy
       supplier-service-2:
-        condition: service_started
+        condition: service_healthy
     networks:
       - backend_net
+    healthcheck:
+      <<: *spring-healthcheck-defaults
+      test: ["CMD-SHELL", "code=$$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8086/); echo $$code | grep -Eq '^(401|403|404|405)$$'"]
 
   # =========================
   # FRONTEND REACT (X2)
   # =========================
   frontend-1:
-    build: ./TiendaGenerica-Frontend-React
+    build:
+      context: ./TiendaGenerica-Frontend-React
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: frontend-1
-    environment:
-      VITE_API_URL: "http://localhost:8080"
+    restart: always
+    
     networks:
       - frontend_net
+    healthcheck:
+      <<: *nginx-healthcheck-defaults
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
 
   frontend-2:
-    build: ./TiendaGenerica-Frontend-React
+    build:
+      context: ./TiendaGenerica-Frontend-React
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8080}
     container_name: frontend-2
-    environment:
-      VITE_API_URL: "http://localhost:8080"
+    restart: always
+    
     networks:
       - frontend_net
+    healthcheck:
+      <<: *nginx-healthcheck-defaults
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
 
   # =========================
   # NGINX FRONTEND (SPA Load Balancer)
@@ -409,16 +589,23 @@ services:
   nginx-frontend:
     image: nginx:alpine
     container_name: nginx-frontend
+    restart: always
+    
     ports:
-      - "3000:80"
+      - "${FRONTEND_PORT:-3000}:80"
     volumes:
       - ./nginx/nginx-frontend.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - frontend-1
-      - frontend-2
+      frontend-1:
+        condition: service_healthy
+      frontend-2:
+        condition: service_healthy
     networks:
       - frontend_net
       - backend_net
+    healthcheck:
+      <<: *nginx-healthcheck-defaults
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/"]
 
 # =========================
 # NETWORKS

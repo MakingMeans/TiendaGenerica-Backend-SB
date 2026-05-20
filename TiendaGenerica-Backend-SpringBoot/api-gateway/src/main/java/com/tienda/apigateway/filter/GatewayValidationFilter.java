@@ -27,6 +27,11 @@ public class GatewayValidationFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getPath().value();
 
+        if (exchange.getRequest().getMethod() != null
+                && "OPTIONS".equalsIgnoreCase(exchange.getRequest().getMethod().name())) {
+            return chain.filter(exchange);
+        }
+
         // bypass validation for authentication endpoints
         if (path.startsWith("/auth/")) { // incluye login y signup
             return chain.filter(exchange);
