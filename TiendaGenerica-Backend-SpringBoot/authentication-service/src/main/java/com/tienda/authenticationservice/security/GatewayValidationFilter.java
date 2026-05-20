@@ -23,12 +23,21 @@ public class GatewayValidationFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        /*String path = httpRequest.getRequestURI();
-
-        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui") || path.contains("/swagger-ui.html")) {
+        if ("OPTIONS".equalsIgnoreCase(httpRequest.getMethod())) {
             chain.doFilter(request, response);
             return;
-        }*/
+        }
+
+        String path = httpRequest.getRequestURI();
+
+        if (path.startsWith("/auth/")
+                || path.equals("/admin/login")
+                || path.contains("/v3/api-docs")
+                || path.contains("/swagger-ui")
+                || path.contains("/swagger-ui.html")) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         String gatewayHeader = httpRequest.getHeader("X-Gateway-Secret");
 
